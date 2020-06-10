@@ -13,6 +13,7 @@ from azure.cli.core.commands.parameters import (
     resource_group_name_type,
     get_three_state_flag,
 )
+from azext_iot.digitaltwins.dev._params import load_dt_dev_arguments
 
 depfor_type = CLIArgumentType(
     options_list=["--dependencies-for"],
@@ -287,3 +288,4 @@ def load_digitaltwins_arguments(self, _):
         context.argument(
             "dependencies_for", arg_type=depfor_type,
         )
+    load_dt_dev_arguments(self, _)

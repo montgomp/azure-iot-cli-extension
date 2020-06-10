@@ -8,6 +8,7 @@ Help definitions for IoT Hub commands.
 """
 
 from knack.help_files import helps
+from azext_iot.digitaltwins.dev._help import load_help as load_dev_help
 
 
 def load_digitaltwins_help():
@@ -588,3 +589,5 @@ def load_digitaltwins_help():
           text: >
             az dt model delete -n {instance_name} --dtmi "dtmi:example:Floor;1"
     """
+
+    load_dev_help()
