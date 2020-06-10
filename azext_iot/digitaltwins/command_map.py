@@ -141,3 +141,6 @@ def load_digitaltwins_commands(self, _):
         )
         cmd_group.command("update", "update_model")
         cmd_group.command("delete", "delete_model")
+
+    from azext_iot.digitaltwins.dev.commands import load_commands as load_dev_commands
+    load_dev_commands(self, _)
