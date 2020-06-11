@@ -14,6 +14,10 @@ import six
 def create(model, twin_id, properties=None, force=False):
     twin_data = read_JSON_file(TWINS_FILE)
 
+    # if twin.json hadn't existed b/c of not running az dt dev init
+    if twin_data is None or twin_data == {}:
+        twin_data = []
+
     if any(twin_id == item["@id"] for item in twin_data):
         if not force:
             raise CLIError('A twin with @id of "{}" already exists in {}'.format(twin_id, TWINS_FILE))
