@@ -11,6 +11,8 @@ from knack.util import CLIError
 
 
 class MainTest(unittest.TestCase):
+    @mock.patch('azext_iot.digitaltwins.dev.main.write_JSON_file')
+    @mock.patch('azext_iot.digitaltwins.dev.main.read_JSON_file')
     @mock.patch('azext_iot.digitaltwins.dev.main.zip_distribution')
     @mock.patch('azext_iot.digitaltwins.dev.main.build_twins')
     @mock.patch('azext_iot.digitaltwins.dev.main.build_models')
@@ -29,7 +31,10 @@ class MainTest(unittest.TestCase):
                              mock_path_join,
                              mock_build_models,
                              mock_build_twins,
-                             mock_zip):
+                             mock_zip,
+                             mock_read_config,
+                             mock_json_writer):
+        mock_read_config.return_value = {}
         mock_exists.return_value = True
         mock_path_join.return_value = "dist_models"
         mock_build_models.return_value = "test models"
@@ -44,6 +49,45 @@ class MainTest(unittest.TestCase):
         mock_build_models.assert_called()
         mock_build_twins.assert_called_with("test models")
         mock_zip.assert_called()
+
+    @mock.patch('azext_iot.digitaltwins.dev.main.write_JSON_file')
+    @mock.patch('azext_iot.digitaltwins.dev.main.read_JSON_file')
+    @mock.patch('azext_iot.digitaltwins.dev.main.zip_distribution')
+    @mock.patch('azext_iot.digitaltwins.dev.main.build_twins')
+    @mock.patch('azext_iot.digitaltwins.dev.main.build_models')
+    @mock.patch('os.path.join')
+    @mock.patch('os.list')
+    @mock.patch('azext_iot.digitaltwins.dev.main.check_create_path')
+    @mock.patch('shutil.rmtree')
+    @mock.patch('os.remove')
+    @mock.patch('os.path.exists')
+    def test_build_workspace_without_zip(self,
+                             mock_exists,
+                             mock_remove,
+                             mock_rmtree,
+                             mock_create_path,
+                             mock_os_list,
+                             mock_path_join,
+                             mock_build_models,
+                             mock_build_twins,
+                             mock_zip,
+                             mock_read_config,
+                             mock_json_writer):
+        mock_read_config.return_value = {"noZip": True}
+        mock_exists.return_value = True
+        mock_path_join.return_value = "dist_models"
+        mock_build_models.return_value = "test models"
+        dt_dev.build_workspace(self)
+        mock_remove.assert_called_with("dist.zip")
+        mock_rmtree.assert_called_with("dist", ignore_errors=True)
+        mock_create_path.assert_has_calls([
+            mock.call("dist"),
+            mock.call("Models"),
+            mock.call("dist_models")
+        ])
+        mock_build_models.assert_called()
+        mock_build_twins.assert_called_with("test models")
+        mock_zip.assert_not_called()
 
     @mock.patch('six.print_')
     @mock.patch('azext_iot.digitaltwins.dev.main.write_JSON_file')
@@ -301,6 +345,52 @@ class MainTest(unittest.TestCase):
         mock_deploy_endpoints.assert_called()
         mock_deploy_routes.assert_called()
 
+    @mock.patch('azext_iot.digitaltwins.dev.main.deploy_routes')
+    @mock.patch('azext_iot.digitaltwins.dev.main.deploy_endpoints')
+    @mock.patch('azext_iot.digitaltwins.dev.main.deploy_twins')
+    @mock.patch('azext_iot.digitaltwins.dev.main.deploy_models')
+    @mock.patch('azext_iot.digitaltwins.dev.main.check_create_instance')
+    @mock.patch('azext_iot.digitaltwins.dev.main.get_configuration_data')
+    @mock.patch('azext_iot.digitaltwins.dev.main.extract_distribution')
+    @mock.patch('shutil.rmtree')
+    @mock.patch('os.path.exists')
+    @mock.patch('azext_iot.digitaltwins.dev.main.build_workspace')
+    def test_deploy_workspace_always_rebuilds(self,
+                              mock_build,
+                              mock_exists,
+                              mock_rmtree,
+                              mock_extract,
+                              mock_config,
+                              mock_create_instance,
+                              mock_deploy_models,
+                              mock_deploy_twins,
+                              mock_deploy_endpoints,
+                              mock_deploy_routes):
+        mock_exists.return_value = True
+        mock_config.return_value = {"rebuild": "always"}
+        with self.assertRaises(CLIError):
+            dt_dev.deploy_workspace(self)
+        with self.assertRaises(CLIError):
+            dt_dev.deploy_workspace(self, location="test")
+        with self.assertRaises(CLIError):
+            dt_dev.deploy_workspace(self, location="test location", resource_group_name="test resource group")
+        mock_config.return_value = {
+            "location": "test location",
+            "resourceGroup": "test resource group",
+            "name": "test name"
+        }
+
+        dt_dev.deploy_workspace(self)
+        mock_build.assert_called()
+        mock_rmtree.assert_called()
+        mock_extract.assert_called()
+        mock_config.assert_called()
+        mock_create_instance.assert_called()
+        mock_deploy_models.assert_called()
+        mock_deploy_twins.assert_called()
+        mock_deploy_endpoints.assert_called()
+        mock_deploy_routes.assert_called()
+
     @mock.patch('os.mkdir')
     @mock.patch('os.path.exists')
     def test_get_models_folder_path(self, mock_exists, mock_mkdir):
@@ -527,12 +617,12 @@ class MainTest(unittest.TestCase):
         mock_delete.assert_called_with(
             self,
             name="mock_instance",
-            resource_group="mock_resource_group"
+            resource_group_name="mock_resource_group"
         )
         mock_create.assert_called_with(
             self,
             name="mock_instance",
-            resource_group="mock_resource_group",
+            resource_group_name="mock_resource_group",
             location="westus2"
         )
 
@@ -549,7 +639,7 @@ class MainTest(unittest.TestCase):
         mock_create.assert_called_with(
             self,
             name="mock_instance",
-            resource_group="mock_resource_group",
+            resource_group_name="mock_resource_group",
             location="westus2"
         )
         mock_delete.assert_not_called()
