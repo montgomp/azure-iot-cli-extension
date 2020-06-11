@@ -16,3 +16,5 @@ FUNCTIONS_FOLDER = "Functions"
 
 DIST_FOLDER = "dist"
 DIST_FILE = "dist.zip"
+
+COOL_OFF = 5

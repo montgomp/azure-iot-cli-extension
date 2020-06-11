@@ -10,7 +10,7 @@ import os
 import shutil
 import zipfile
 from knack.util import CLIError
-from azext_iot.digitaltwins.dev.constants import CONFIG_FILE, DIST_FILE, DIST_FOLDER, MODELS_FOLDER, MODELS_EXTENSION, TWINS_FILE
+from azext_iot.digitaltwins.dev.constants import CONFIG_FILE, DIST_FILE, DIST_FOLDER, MODELS_FOLDER, MODELS_EXTENSION, TWINS_FILE, COOL_OFF
 from azext_iot.digitaltwins.dev.template import activate_template
 from azext_iot.digitaltwins.commands_resource import (
     create_instance,
@@ -24,7 +24,7 @@ from azext_iot.digitaltwins.commands_models import add_models
 from azext_iot.digitaltwins.commands_twins import create_twin, create_relationship
 from azext_iot.digitaltwins.commands_routes import create_route
 from enum import Enum
-
+from time import sleep
 
 class DeploymentStrategy(Enum):
     Append = "Append"
@@ -64,8 +64,7 @@ def write_JSON_file(file, contents):
         json.dump(contents, f, indent=4, sort_keys=True)
 
 
-def build_endpoints():
-    config_data = read_JSON_file(CONFIG_FILE)
+def build_endpoints(config_data):
     if "endpoints" not in config_data:
         six.print_("No endpoints specified")
         return
@@ -91,8 +90,7 @@ def build_endpoints():
                 raise CLIError("Endpoint '{}' is missing required configuration for servicebus_policy".format(endpoint["@id"]))
 
 
-def build_routes():
-    config_data = read_JSON_file(CONFIG_FILE)
+def build_routes(config_data):
     if "routes" not in config_data:
         six.print_("No routes configured")
         return
@@ -224,10 +222,15 @@ def build_workspace(cmd):
     known_models = build_models()
     build_twins(known_models)
 
-    build_endpoints()
-    build_routes()
+    config_data = read_JSON_file(CONFIG_FILE)
 
-    zip_distribution()
+    write_JSON_file(os.path.join(DIST_FOLDER, CONFIG_FILE), config_data)
+
+    build_endpoints(config_data)
+    build_routes(config_data)
+
+    if "noZip" not in config_data or not config_data["noZip"]:
+        zip_distribution()
 
 
 def zip_distribution():
@@ -257,12 +260,20 @@ def deploy_workspace(
     if os.path.exists(file_name):
         shutil.rmtree(working_folder, ignore_errors=True)  # zip will override this folder
         extract_distribution(file_name, working_folder)
-    #  if it hasn't been built yet, build it
+
+    should_build = False
     if not os.path.exists(working_folder):
         if DIST_FOLDER != working_folder:
             raise CLIError("Working folder does not exist. Please rebuild and ensure value specified in --working_folder exists.")
-        build_workspace(cmd)
+        should_build = True  #  if it hasn't been built yet, build it
     config_data = get_configuration_data(working_folder, config)
+
+    #  if user always wants to rebuild, build it
+    should_build = should_build or ("rebuild" in config_data and "always" == config_data["rebuild"])
+
+    if should_build:
+        build_workspace(cmd)
+
     if location is not None:
         config_data["location"] = location
     if "location" not in config_data or config_data["location"] is None:
@@ -284,24 +295,21 @@ def deploy_workspace(
             deployment_strategy = DeploymentStrategy.Safe
         else:
             config_data["deployment_strategy"] = deployment_strategy
-    six.print_(config_data)
 
     check_create_instance(cmd, config_data)
 
-    deploy_models(config_data)
-    deploy_twins(config_data)
-    deploy_endpoints(config_data)
-    deploy_routes(config_data)
+    deploy_models(cmd, config_data)
+    deploy_twins(cmd, config_data)
+    deploy_endpoints(cmd, config_data)
+    deploy_routes(cmd, config_data)
 
 
 def check_create_instance(cmd, config_data):
     instance_data = None
     try:
         instance_data = show_instance(cmd, config_data["name"], config_data["resourceGroup"])
-        six.print_(instance_data)
         # do we remove the existing instance or fail here?
     except Exception:
-        six.print_("instance not found")
         instance_data = None
 
     if instance_data is None:
@@ -311,7 +319,7 @@ def check_create_instance(cmd, config_data):
             instance_data = create_instance(
                 cmd,
                 name=config_data["name"],
-                resource_group=config_data["resourceGroup"],
+                resource_group_name=config_data["resourceGroup"],
                 location=config_data["location"],
                 tags=config_data["tags"])
         else:
@@ -319,17 +327,19 @@ def check_create_instance(cmd, config_data):
             instance_data = create_instance(
                 cmd,
                 name=config_data["name"],
-                resource_group=config_data["resourceGroup"],
+                resource_group_name=config_data["resourceGroup"],
                 location=config_data["location"])
+        sleep(COOL_OFF)
         return
 
     if "deployment_strategy" in config_data and config_data["deployment_strategy"] == "Overwrite":
-        six.print_("Found resource {}, using overwrite deployment strategy. Deleting exsting instance...")
+        six.print_("Found resource, using overwrite deployment strategy. Deleting exsting instance...")
         delete_instance(
             cmd,
             name=config_data["name"],
-            resource_group=config_data["resourceGroup"])
+            resource_group_name=config_data["resourceGroup"])
         six.print_("Instance {} has been deleted".format(config_data["name"]))
+        sleep(COOL_OFF)
         if "location" not in config_data:
             raise CLIError("Location is not configured")
 
@@ -338,7 +348,7 @@ def check_create_instance(cmd, config_data):
             instance_data = create_instance(
                 cmd,
                 name=config_data["name"],
-                resource_group=config_data["resourceGroup"],
+                resource_group_name=config_data["resourceGroup"],
                 location=config_data["location"],
                 tags=config_data["tags"])
         else:
@@ -346,8 +356,9 @@ def check_create_instance(cmd, config_data):
             instance_data = create_instance(
                 cmd,
                 name=config_data["name"],
-                resource_group=config_data["resourceGroup"],
+                resource_group_name=config_data["resourceGroup"],
                 location=config_data["location"])
+        sleep(COOL_OFF)
         return
     elif "deployment_strategy" not in config_data or config_data["deployment_strategy"] != "Append":
         raise CLIError("Instance has already been created and will not be changed using a safe deployment strategy.")
