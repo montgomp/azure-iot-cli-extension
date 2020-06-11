@@ -61,18 +61,20 @@ class MainTest(unittest.TestCase):
     @mock.patch('shutil.rmtree')
     @mock.patch('os.remove')
     @mock.patch('os.path.exists')
-    def test_build_workspace_without_zip(self,
-                             mock_exists,
-                             mock_remove,
-                             mock_rmtree,
-                             mock_create_path,
-                             mock_os_list,
-                             mock_path_join,
-                             mock_build_models,
-                             mock_build_twins,
-                             mock_zip,
-                             mock_read_config,
-                             mock_json_writer):
+    def test_build_workspace_without_zip(
+        self,
+        mock_exists,
+        mock_remove,
+        mock_rmtree,
+        mock_create_path,
+        mock_os_list,
+        mock_path_join,
+        mock_build_models,
+        mock_build_twins,
+        mock_zip,
+        mock_read_config,
+        mock_json_writer
+    ):
         mock_read_config.return_value = {"noZip": True}
         mock_exists.return_value = True
         mock_path_join.return_value = "dist_models"
@@ -355,17 +357,19 @@ class MainTest(unittest.TestCase):
     @mock.patch('shutil.rmtree')
     @mock.patch('os.path.exists')
     @mock.patch('azext_iot.digitaltwins.dev.main.build_workspace')
-    def test_deploy_workspace_always_rebuilds(self,
-                              mock_build,
-                              mock_exists,
-                              mock_rmtree,
-                              mock_extract,
-                              mock_config,
-                              mock_create_instance,
-                              mock_deploy_models,
-                              mock_deploy_twins,
-                              mock_deploy_endpoints,
-                              mock_deploy_routes):
+    def test_deploy_workspace_always_rebuilds(
+        self,
+        mock_build,
+        mock_exists,
+        mock_rmtree,
+        mock_extract,
+        mock_config,
+        mock_create_instance,
+        mock_deploy_models,
+        mock_deploy_twins,
+        mock_deploy_endpoints,
+        mock_deploy_routes
+    ):
         mock_exists.return_value = True
         mock_config.return_value = {"rebuild": "always"}
         with self.assertRaises(CLIError):

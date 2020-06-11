@@ -10,7 +10,15 @@ import os
 import shutil
 import zipfile
 from knack.util import CLIError
-from azext_iot.digitaltwins.dev.constants import CONFIG_FILE, DIST_FILE, DIST_FOLDER, MODELS_FOLDER, MODELS_EXTENSION, TWINS_FILE, COOL_OFF
+from azext_iot.digitaltwins.dev.constants import (
+    CONFIG_FILE,
+    DIST_FILE,
+    DIST_FOLDER,
+    MODELS_FOLDER,
+    MODELS_EXTENSION,
+    TWINS_FILE,
+    COOL_OFF
+)
 from azext_iot.digitaltwins.dev.template import activate_template
 from azext_iot.digitaltwins.commands_resource import (
     create_instance,
@@ -25,6 +33,7 @@ from azext_iot.digitaltwins.commands_twins import create_twin, create_relationsh
 from azext_iot.digitaltwins.commands_routes import create_route
 from enum import Enum
 from time import sleep
+
 
 class DeploymentStrategy(Enum):
     Append = "Append"
@@ -265,7 +274,8 @@ def deploy_workspace(
     if not os.path.exists(working_folder):
         if DIST_FOLDER != working_folder:
             raise CLIError("Working folder does not exist. Please rebuild and ensure value specified in --working_folder exists.")
-        should_build = True  #  if it hasn't been built yet, build it
+        #  if it hasn't been built yet, build it
+        should_build = True
     config_data = get_configuration_data(working_folder, config)
 
     #  if user always wants to rebuild, build it
