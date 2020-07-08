@@ -3,3 +3,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+
+from enum import Enum
+
+class TaskType(Enum):
+    QueueTestRun = "QueueTestRun"
+    GenerateTestCases = "GenerateTestCases"
+
+class BadgeType(Enum):
+    IotDevice = "IotDevice"
+    Pnp = "Pnp"
+    IotEdgeCompatible = "IotEdgeCompatible"
