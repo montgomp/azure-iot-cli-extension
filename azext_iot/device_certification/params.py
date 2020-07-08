@@ -13,9 +13,14 @@ from azext_iot.device_certification.shared import BadgeType, TaskType
 
 def load_device_certification_params(self, _):
     with self.argument_context('iot device-certification') as c:
+        c.argument('product_name',
+            options_list=['--product-name'],
+            help='Product name to display in catalog',
+            arg_group='IoT Device Certification'
+        )
         c.argument('test_id',
             options_list=['--test-id'],
-            help='The Id of the Microsoft.Azure.IoT.TestKit.Models.DeviceTest',
+            help='The generated Id for the device certification test',
             arg_group='IoT Device Certification'
         )
         c.argument(
@@ -25,12 +30,6 @@ def load_device_certification_params(self, _):
             arg_group='IoT Device Certification',
             arg_type=get_enum_type(BadgeType)
         )
-        c.argument(
-            'configuration_file',
-            options_list=['--configuration_file', '--cf'],
-            help='The file path for test case configuration JSON',
-            arg_group='IoT Device Certification'
-        )
     with self.argument_context('iot device-certification test') as c:
         c.argument('provisioning',
             options_list=['--provisioning'],
@@ -38,31 +37,39 @@ def load_device_certification_params(self, _):
             arg_group='IoT Device Certification'
         )
         c.argument('configuration_file',
-            options_list=['--configuration_file', '--cf'],
+            options_list=['--configuration-file', '--cf'],
             help='Path to device test JSON file',
             arg_group='IoT Device Certification'
         )
     with self.argument_context('iot device-certification test search') as c:
         c.argument('product_id',
-            options_list=['--product-id'],
+            options_list=['--product-id', '--pi'],
             help='The submitted product id',
             arg_group='IoT Device Certification'
         )
         c.argument(
             'registration_id',
-            options_list=['--registration-id'],
+            options_list=['--registration-id', '--ri'],
             help='The regstration Id for Device Provisioning Service',
             arg_group='IoT Device Certification'
         )
         c.argument(
             'certificate_name',
             options_list=['--certificate-name', '--cn'],
-            help='The x509 Certificate Common Name (cn) used for Device Provisioning Service authentication'
+            help='The x509 Certificate Common Name (cn) used for Device Provisioning Service authentication',
+            arg_group='IoT Device Certification'
+        )
+    with self.argument_context('iot device-certification test-case') as c:
+        c.argument(
+            'configuration_file',
+            options_list=['--configuration-file', '--cf'],
+            help='The file path for test case configuration JSON',
+            arg_group='IoT Device Certification'
         )
     with self.argument_context('iot device-certification test-task') as c:
         c.argument('task_id',
             options_list=['--task-id'],
-            help='The Id of the Microsoft.Azure.IoT.TestKit.Models.DeviceTestTask',
+            help='The generated Id of the testing task',
             arg_group='IoT Device Certification'
         )
         c.argument('running',
@@ -81,7 +88,7 @@ def load_device_certification_params(self, _):
     with self.argument_context('iot device-certification test-run') as c:
         c.argument('run_id',
             options_list=['--run-id'],
-            help='The Id of a Microsoft.Azure.IoT.TestKit.Models.TestRun',
+            help='The generated Id of a test run',
             arg_group='IoT Device Certification'
         )
         c.argument('latest',
