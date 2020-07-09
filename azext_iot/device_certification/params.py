@@ -9,7 +9,7 @@ CLI parameter definitions.
 """
 
 from azure.cli.core.commands.parameters import get_three_state_flag, get_enum_type
-from azext_iot.device_certification.shared import BadgeType, TaskType
+from azext_iot.device_certification.shared import AuthType, BadgeType, TaskType
 
 def load_device_certification_params(self, _):
     with self.argument_context('iot device-certification') as c:
@@ -31,6 +31,19 @@ def load_device_certification_params(self, _):
             arg_type=get_enum_type(BadgeType)
         )
     with self.argument_context('iot device-certification test') as c:
+        c.argument(
+            'working_folder',
+            options_list=['--working-folder', '--wf'],
+            help='The folder to create in current path',
+            arg_group='IoT Device Certification'
+        )
+        c.argument(
+            'auth_type',
+            options_list=['--authentication-type', '--at'],
+            help='How the device will authenticate to testing service Device Provisioning Service',
+            arg_group='IoT Device Certification',
+            arg_type=get_enum_type(AuthType)
+        )
         c.argument('provisioning',
             options_list=['--provisioning'],
             help='Determines whether the service generates provisioning configuration. Only applies to SymmetricKey and ConnectionString provisioning types',
@@ -85,11 +98,37 @@ def load_device_certification_params(self, _):
             arg_group='IoT Device Certification',
             arg_type=get_enum_type(TaskType)
         )
+        c.argument(
+            'monitor',
+            options_list=['--monitor', '-m'],
+            help='Monitor task to completion and return test case data when available',
+            arg_group='IoT Device Certification',
+            arg_type=get_three_state_flag()
+        )
+        c.argument(
+            'monitor_interval',
+            options_list=['--monitor-interval', '--mi'],
+            help='Used in conjunction with --monitor. Sepcifies how frequently (in seconds) polling occurs',
+            arg_group='IoT Device Certification',
+        )
     with self.argument_context('iot device-certification test-run') as c:
         c.argument('run_id',
             options_list=['--run-id'],
             help='The generated Id of a test run',
             arg_group='IoT Device Certification'
+        )
+        c.argument(
+            'monitor',
+            options_list=['--monitor', '-m'],
+            help='Monitor test run until status is "started" or "running"',
+            arg_group='IoT Device Certification',
+            arg_type=get_three_state_flag()
+        )
+        c.argument(
+            'monitor_interval',
+            options_list=['--monitor-interval', '--mi'],
+            help='Used in conjunction with --monitor. Sepcifies how frequently (in seconds) polling occurs',
+            arg_group='IoT Device Certification',
         )
         c.argument('latest',
             options_list=['--latest'],

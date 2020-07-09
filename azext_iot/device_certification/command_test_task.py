@@ -5,7 +5,8 @@
 # --------------------------------------------------------------------------------------------
 
 from azext_iot.device_certification.shared import TaskType
-def create(test_id, type = TaskType.QueueTestRun):
+
+def create(test_id, type=TaskType.QueueTestRun, monitor=False, monitor_interval=3):
     # call POST to /deviceTests/{devicetestId}/tasks
     return True
 def delete(test_id, task_id):

@@ -14,3 +14,8 @@ class BadgeType(Enum):
     IotDevice = "IotDevice"
     Pnp = "Pnp"
     IotEdgeCompatible = "IotEdgeCompatible"
+
+class AuthType(Enum):
+    symmetricKey = "symmetricKey"
+    tpm = "tpm"
+    x509 = "x509"

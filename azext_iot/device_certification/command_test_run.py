@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-def show(test_id, run_id=None, latest=False):
+def show(test_id, run_id=None, latest=False, monitor=False, monitor_interval=3):
     # if run_id GET /deviceTests/{deviceTestId}testRuns/{testRunId}
     # else if latest GET /deviceTests/{deviceTestId}/testRuns/latest
     # else fail

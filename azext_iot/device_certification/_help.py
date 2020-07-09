@@ -96,6 +96,12 @@ def load_help():
         - name: Basic usage
           text: >
             az iot device-certification test-task create --test-id {test_id}
+        - name: Monitor to completion and return test case
+          text: >
+            az iot device-certification test-task create --test-id {test_id} --monitor
+        - name: Monitor with custom polling interval to completion and return test case
+          text: >
+            az iot device-certification test-task create --test-id {test_id} --monitor --monitor-interval 5
     """
     helps["iot device-certification test-task delete"] = """
         type: command
