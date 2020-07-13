@@ -7,38 +7,135 @@
 from azext_iot.device_certification.shared import AuthType
 from azext_iot.device_certification.providers.provider import get_sdk
 from azext_iot.sdk.device_certification.version import VERSION
+from uuid import uuid4
 from knack.util import CLIError
 
 
 def initialize_workspace(cmd, product_name, working_folder="PnPCert", auth_type=AuthType.symmetricKey):
-    # https://prtnrsvcstortstcus.blob.core.windows.net/product-metadata-templates/product_template.json
-    # create working folder if it doesn't exist
-    # create a <product_name>.json file with details from Koichi
-    # if x509, then
-    # "x509EnrollmentInformation": {
-    #   "scopeId": "string",
-    #   "subject": "string",
-    #   "thumbprint": "string",
-    #   "registrationId": "string",
-    #   "base64EncodedX509Certificate": "string"
-    # },
+    id = uuid4()
+    product_config = {
+        "id": str(id),
+        "industryTemplates": [
+            """
+                InstoreAnalytics |
+                DigitalDistributionCenter |
+                ConnectedLogistics |
+                SmartInventoryManagement |
+                ContinuousPatientMonitoring |
+                SmartMeterAnalytics |
+                SolarPowerMonitoring |
+                WaterQualityMonitoring |
+                WaterConsumptionMonitoring |
+                ConnectedWasteManagement |
+                ShelfAvailability
+            """
+        ],
+        "name": product_name,
+        "shortDescription": "string - max length 100",
+        "longDescription": "string - max length 1200",
+        "dimensions": {
+            "length": {
+                "value": 0,
+                "displayUnit": "cm | @in"
+            },
+            "width": {
+                "value": 0,
+                "displayUnit": "cm | @in"
+            },
+            "height": {
+                "value": 0,
+                "displayUnit": "cm | @in"
+            }
+        },
+        "weight": {
+            "value": 0,
+            "displayUnit": "g | lb"
+        },
+        "deviceType": "FinishedProduct | DevKit",
+        "geoAvailability": [
+            "Worldwide | EMEA | APAC_Except_Japan | Americas | Japan"
+        ],
+        "marketingPage": "url",
+        "purchaseURL": "url",
+        "salesContact": "url",
+        "caseStudyURL": "url",
+        "languages": [
+            "C | CSharp | Java | JavaScript | Python"
+        ],
+        "os": [""],
+        "cloudProtocols": [
+            "AMQPS | AMQPS_Websockets | MQTT | MQTT_Websockets | HTTPS"
+        ],
+        "industrialProtocols": [
+            "CAN_Bus | EtherCAT | Modbus | OPC_Classic | OPC_UA | PROFINET | ZigBee | PPMP | Others"
+        ],
+        "connectivity": [
+            "Bluetooth | LAN | WIFI | LTE | ThreeG | Others"
+        ],
+        "hardwareInterfaces": [
+            "GPIO | I2C_SPI | COM | USB | Others"
+        ],
+        "integratedSensors": [
+            """
+                GPS |
+                Touch |
+                LED |
+                Light |
+                Gas |
+                Noise |
+                Proximity |
+                Temperature |
+                Humidity |
+                Pressure |
+                Accelerometers |
+                Weight |
+                Soil_Alkalinity |
+                Vibrations |
+                Image_capture |
+                Motion_Detection |
+                Chemical_compound_presence |
+                No_Sensors
+            """
+        ],
+        "secureHardware": [
+            "TPM | DICE | SIM_eSIM | Smartcard | Others"
+        ],
+        "numOfHardwareComponents": 1,
+        "componentType": "SoM_SoC | Carrier_Board",
+        "componentName": "Video_SoM | Audio_SoM | Video_Carrier_Board | Others",
+        "processorArchitecture": "arm | arm64 | x86 | amd64",
+        "processorManufacturer": "string",
+        "totalStorage": {
+            "value": 0,
+            "displayUnit": "b | kb | mb | gb"
+        },
+        "totalMemory": {
+            "value": 0,
+            "displayUnit": "b | kb | mb | gb"
+        },
+        "battery": {
+            "value": 0,
+            "displayUnit": "mwH"
+        },
+        "hardwareAcceleratorManufacturer": "string",
+        "hardwareAcceleratorName": "string",
+        "hardwareAcceleratorVersion": "string",
+        "industryCertifications": ["FCC | ISCC | Others"],
+        "industryCertificationExternalLink": "url",
+        "distributors": [
+            {
+                "name": "string",
+                "purchaseUrl": "url"
+            }
+        ],
+        "techSpecURL": "url",
+        "firmwareImageURL": "url"
+    }
 
-    # if symmetric key then
-    # "symmetricKeyEnrollmentInformation": {
-    #   "registrationId": "string",
-    #   "primaryKey": "string",
-    #   "secondaryKey": "string",
-    #   "scopeId": "string"
-    # },
-
-    # if tpm then
-    # "tpmEnrollmentInformation": {
-    #   "scopeId": "string",
-    #   "registrationId": "string",
-    #   "endorsementKey": "string",
-    #   "storageRootKey": "string"
-    # }
-    return True
+    from json import dump
+    from os import path
+    with open(path.join(working_folder, "product_configuration.json"), 'w+', encoding='utf=8') as f:
+        dump(product_config, f, indent=4, sort_keys=True)
 
 
 def create(cmd, configuration_file, provisioning=False):
