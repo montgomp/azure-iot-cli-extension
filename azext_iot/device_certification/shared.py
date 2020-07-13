@@ -19,3 +19,6 @@ class AuthType(Enum):
     symmetricKey = "symmetricKey"
     tpm = "tpm"
     x509 = "x509"
+
+# BASE_URL = "https://test.certcvc.trafficmanager.net"
+BASE_URL = "https://dev.certsvc.trafficmanager.net"

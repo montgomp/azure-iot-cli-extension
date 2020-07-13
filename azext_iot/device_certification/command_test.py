@@ -5,8 +5,14 @@
 # --------------------------------------------------------------------------------------------
 
 from azext_iot.device_certification.shared import AuthType
+from azext_iot.sdk.device_certification.aicsapi import AICSAPI
+from azext_iot.device_certification.providers.provider import get_sdk
+from azext_iot.sdk.device_certification.version import VERSION
+from six import print_
+from knack.util import CLIError
 
 def initialize_workspace(cmd, product_name, working_folder="PnPCert", auth_type=AuthType.symmetricKey):
+    # https://prtnrsvcstortstcus.blob.core.windows.net/product-metadata-templates/product_template.json
     # create working folder if it doesn't exist
     # create a <product_name>.json file with details from Koichi
     # if x509, then
@@ -35,18 +41,31 @@ def initialize_workspace(cmd, product_name, working_folder="PnPCert", auth_type=
     # }
     return True
 
-def create(configuration_file, provisioning=False):
+def create(cmd, configuration_file, provisioning=False):
     # call to POST /deviceTests
     return True
 
-def show(test_id):
+def show(cmd, test_id):
     # call to GET /deviceTests/{deviceTestId}
     return True
 
-def update(configuration_file, provisioning=False):
+def update(cmd, test_id, configuration_file, provisioning=False):
     # call to POST /deviceTests
     return True
 
-def search(product_id="", registration_id="", certificate_name=""):
+def search(cmd, product_id=None, registration_id=None, certificate_name=None):
     # call to POST /deviceTests/search
-    return True
+    if not any([product_id or registration_id or certificate_name]):
+        raise CLIError(
+        'At least one search criteria must be specified'
+    )
+    from azext_iot.sdk.device_certification.models.device_test_search_options import DeviceTestSearchOptions
+    searchOptions = {
+        'product_id': product_id,
+        'dps_registration_id': registration_id,
+        'dps_x509_certificate_common_name': certificate_name
+    }
+    return get_sdk(cmd).search_device_test(
+        VERSION,
+        searchOptions
+    )

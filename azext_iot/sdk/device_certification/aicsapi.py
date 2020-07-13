@@ -18,18 +18,25 @@ class AICSAPIConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param credentials: Subscription credentials which uniquely identify
+     client subscription.
+    :type credentials: None
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, base_url=None):
+            self, credentials, base_url=None):
 
+        if credentials is None:
+            raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
             base_url = 'http://localhost'
 
         super(AICSAPIConfiguration, self).__init__(base_url)
 
         self.add_user_agent('aicsapi/{}'.format(VERSION))
+
+        self.credentials = credentials
 
 
 class AICSAPI(SDKClient):
@@ -38,17 +45,20 @@ class AICSAPI(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: AICSAPIConfiguration
 
+    :param credentials: Subscription credentials which uniquely identify
+     client subscription.
+    :type credentials: None
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, base_url=None):
+            self, credentials, base_url=None):
 
-        self.config = AICSAPIConfiguration(base_url)
-        super(AICSAPI, self).__init__(None, self.config)
+        self.config = AICSAPIConfiguration(credentials, base_url)
+        super(AICSAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = 'v1'
+        self.api_version = '2020-05-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
