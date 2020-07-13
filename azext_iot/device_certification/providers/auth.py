@@ -6,6 +6,7 @@
 
 from msrest.authentication import Authentication
 
+
 class AICSAuthentication(Authentication):
 
     def __init__(self, cmd, base_url):

@@ -29,6 +29,7 @@ test_runs_ops = CliCommandType(
     operations_tmpl='azext_iot.device_certification.command_test_run#{}'
 )
 
+
 def load_device_certification_commands(self, _):
     with self.command_group(
         'iot device-certification requirement',

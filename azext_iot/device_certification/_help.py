@@ -9,6 +9,7 @@ Help definitions for Device Certification commands.
 
 from knack.help_files import helps
 
+
 def load_help():
     helps["iot device-certification"] = """
         type: group

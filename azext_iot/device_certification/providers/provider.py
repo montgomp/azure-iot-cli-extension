@@ -12,6 +12,7 @@ from knack.log import get_logger
 
 logger = get_logger(__name__)
 
+
 def get_sdk(cmd):
 
     creds = AICSAuthentication(cmd=cmd, base_url=BASE_URL)

@@ -6,6 +6,7 @@
 
 from azext_iot.device_certification.shared import BadgeType
 
+
 def list(badge_type=BadgeType.IotDevice):
     # call to GET /certificationRequirements
     return True

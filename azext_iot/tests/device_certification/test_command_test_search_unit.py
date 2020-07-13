@@ -10,15 +10,16 @@ from knack.util import CLIError
 from azext_iot.device_certification.command_test import search
 from azext_iot.sdk.device_certification.version import VERSION
 
+
 class SearchClass(unittest.TestCase):
     @mock.patch('azext_iot.sdk.device_certification.aicsapi.AICSAPI.search_device_test')
     def test_search_not_called_when_no_criteria(self, mock_search):
         with self.assertRaises(CLIError):
-            search()
+            search(self)
 
     @mock.patch('azext_iot.sdk.device_certification.aicsapi.AICSAPI.search_device_test')
     def test_search_called_with_product_id(self, mock_search):
-        search(product_id='123')
+        search(self, product_id='123')
         mock_search.assert_called_with(
             VERSION,
             {
@@ -30,7 +31,7 @@ class SearchClass(unittest.TestCase):
 
     @mock.patch('azext_iot.sdk.device_certification.aicsapi.AICSAPI.search_device_test')
     def test_search_called_with_registration_id(self, mock_search):
-        search(registration_id='123')
+        search(self, registration_id='123')
         mock_search.assert_called_with(
             VERSION,
             {
@@ -42,7 +43,7 @@ class SearchClass(unittest.TestCase):
 
     @mock.patch('azext_iot.sdk.device_certification.aicsapi.AICSAPI.search_device_test')
     def test_search_called_with_certificate_name(self, mock_search):
-        search(certificate_name='123')
+        search(self, certificate_name='123')
         mock_search.assert_called_with(
             VERSION,
             {

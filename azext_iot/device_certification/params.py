@@ -11,14 +11,17 @@ CLI parameter definitions.
 from azure.cli.core.commands.parameters import get_three_state_flag, get_enum_type
 from azext_iot.device_certification.shared import AuthType, BadgeType, TaskType
 
+
 def load_device_certification_params(self, _):
     with self.argument_context('iot device-certification') as c:
-        c.argument('product_name',
+        c.argument(
+            'product_name',
             options_list=['--product-name'],
             help='Product name to display in catalog',
             arg_group='IoT Device Certification'
         )
-        c.argument('test_id',
+        c.argument(
+            'test_id',
             options_list=['--test-id'],
             help='The generated Id for the device certification test',
             arg_group='IoT Device Certification'
@@ -44,18 +47,22 @@ def load_device_certification_params(self, _):
             arg_group='IoT Device Certification',
             arg_type=get_enum_type(AuthType)
         )
-        c.argument('provisioning',
+        c.argument(
+            'provisioning',
             options_list=['--provisioning'],
-            help='Determines whether the service generates provisioning configuration. Only applies to SymmetricKey and ConnectionString provisioning types',
+            help='Determines whether the service generates provisioning configuration. '
+            + 'Only applies to SymmetricKey and ConnectionString provisioning types',
             arg_group='IoT Device Certification'
         )
-        c.argument('configuration_file',
+        c.argument(
+            'configuration_file',
             options_list=['--configuration-file', '--cf'],
             help='Path to device test JSON file',
             arg_group='IoT Device Certification'
         )
     with self.argument_context('iot device-certification test search') as c:
-        c.argument('product_id',
+        c.argument(
+            'product_id',
             options_list=['--product-id', '--pi'],
             help='The submitted product id',
             arg_group='IoT Device Certification'
@@ -80,12 +87,14 @@ def load_device_certification_params(self, _):
             arg_group='IoT Device Certification'
         )
     with self.argument_context('iot device-certification test-task') as c:
-        c.argument('task_id',
+        c.argument(
+            'task_id',
             options_list=['--task-id'],
             help='The generated Id of the testing task',
             arg_group='IoT Device Certification'
         )
-        c.argument('running',
+        c.argument(
+            'running',
             options_list=['--running'],
             help='Get the running tasks of a device test',
             arg_group='IoT Device Certification',
@@ -112,7 +121,8 @@ def load_device_certification_params(self, _):
             arg_group='IoT Device Certification',
         )
     with self.argument_context('iot device-certification test-run') as c:
-        c.argument('run_id',
+        c.argument(
+            'run_id',
             options_list=['--run-id'],
             help='The generated Id of a test run',
             arg_group='IoT Device Certification'
@@ -130,7 +140,8 @@ def load_device_certification_params(self, _):
             help='Used in conjunction with --monitor. Sepcifies how frequently (in seconds) polling occurs',
             arg_group='IoT Device Certification',
         )
-        c.argument('latest',
+        c.argument(
+            'latest',
             options_list=['--latest'],
             help='Retrieve the latest test runs',
             arg_group='IoT Device Certification',
