@@ -51,6 +51,9 @@ def load_help():
         - name: Basic usage
           text: >
             az iot device-certification test init --product-name {product_name}
+        - name: Specify working folder
+          text: >
+            az iot device-certification test init --product-name {product_name} --working-folder {working_folder}
     """
     helps["iot device-certification test search"] = """
         type: command

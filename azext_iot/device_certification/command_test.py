@@ -4,15 +4,18 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azext_iot.device_certification.shared import AuthType
 from azext_iot.device_certification.providers.provider import get_sdk
 from azext_iot.sdk.device_certification.version import VERSION
 from uuid import uuid4
 from knack.util import CLIError
+import os
 
 
-def initialize_workspace(cmd, product_name, working_folder="PnPCert", auth_type=AuthType.symmetricKey):
+def initialize_workspace(cmd, product_name, working_folder="PnPCert"):
     id = uuid4()
+    if not os.path.exists(working_folder):
+        os.mkdir(working_folder)
+
     product_config = {
         "id": str(id),
         "industryTemplates": [
@@ -134,8 +137,13 @@ def initialize_workspace(cmd, product_name, working_folder="PnPCert", auth_type=
 
     from json import dump
     from os import path
-    with open(path.join(working_folder, "product_configuration.json"), 'w+', encoding='utf=8') as f:
-        dump(product_config, f, indent=4, sort_keys=True)
+    with open(file=path.join(working_folder, "product_configuration.json"), mode='w+', encoding='utf-8') as f:
+        dump(
+            obj=product_config,
+            fp=f,
+            indent=4,
+            sort_keys=True
+        )
 
 
 def create(cmd, configuration_file, provisioning=False):
