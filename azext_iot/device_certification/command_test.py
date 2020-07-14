@@ -18,22 +18,21 @@ def initialize_workspace(cmd, product_name, working_folder="PnPCert"):
 
     product_config = {
         "id": str(id),
-        "industryTemplates": [
-            """
-                InstoreAnalytics |
-                DigitalDistributionCenter |
-                ConnectedLogistics |
-                SmartInventoryManagement |
-                ContinuousPatientMonitoring |
-                SmartMeterAnalytics |
-                SolarPowerMonitoring |
-                WaterQualityMonitoring |
-                WaterConsumptionMonitoring |
-                ConnectedWasteManagement |
-                ShelfAvailability
-            """
-        ],
         "name": product_name,
+        "industryTemplates": [
+            "InstoreAnalytics |" +
+            " DigitalDistributionCenter |" +
+            " ConnectedLogistics |" +
+            " SmartInventoryManagement |" +
+            " ContinuousPatientMonitoring |" +
+            " SmartMeterAnalytics |" +
+            " SolarPowerMonitoring |" +
+            " WaterQualityMonitoring |" +
+            " WaterConsumptionMonitoring |" +
+            " ConnectedWasteManagement |" +
+            " ShelfAvailability"
+
+        ],
         "shortDescription": "string - max length 100",
         "longDescription": "string - max length 1200",
         "dimensions": {
@@ -79,26 +78,24 @@ def initialize_workspace(cmd, product_name, working_folder="PnPCert"):
             "GPIO | I2C_SPI | COM | USB | Others"
         ],
         "integratedSensors": [
-            """
-                GPS |
-                Touch |
-                LED |
-                Light |
-                Gas |
-                Noise |
-                Proximity |
-                Temperature |
-                Humidity |
-                Pressure |
-                Accelerometers |
-                Weight |
-                Soil_Alkalinity |
-                Vibrations |
-                Image_capture |
-                Motion_Detection |
-                Chemical_compound_presence |
-                No_Sensors
-            """
+            "GPS |" +
+            " Touch |" +
+            " LED |" +
+            " Light |" +
+            " Gas |" +
+            " Noise |" +
+            " Proximity |" +
+            " Temperature |" +
+            " Humidity |" +
+            " Pressure |" +
+            " Accelerometers |" +
+            " Weight |" +
+            " Soil_Alkalinity |" +
+            " Vibrations |" +
+            " Image_capture |" +
+            " Motion_Detection |" +
+            " Chemical_compound_presence |" +
+            " No_Sensors"
         ],
         "secureHardware": [
             "TPM | DICE | SIM_eSIM | Smartcard | Others"
@@ -142,7 +139,7 @@ def initialize_workspace(cmd, product_name, working_folder="PnPCert"):
             obj=product_config,
             fp=f,
             indent=4,
-            sort_keys=True
+            sort_keys=False
         )
 
 
