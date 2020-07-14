@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------------------------
 
 from azext_iot.device_certification.providers.provider import get_sdk
-from azext_iot.sdk.device_certification.version import VERSION
 from uuid import uuid4
 from knack.util import CLIError
 import os
@@ -168,7 +167,7 @@ def search(cmd, product_id=None, registration_id=None, certificate_name=None):
         'dps_registration_id': registration_id,
         'dps_x509_certificate_common_name': certificate_name
     }
+
     return get_sdk(cmd).search_device_test(
-        VERSION,
-        searchOptions
+        body=searchOptions
     )

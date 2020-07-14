@@ -8,7 +8,6 @@ import unittest
 import mock
 from knack.util import CLIError
 from azext_iot.device_certification.command_test import search
-from azext_iot.sdk.device_certification.version import VERSION
 
 
 class SearchClass(unittest.TestCase):
@@ -21,8 +20,7 @@ class SearchClass(unittest.TestCase):
     def test_search_called_with_product_id(self, mock_search):
         search(self, product_id='123')
         mock_search.assert_called_with(
-            VERSION,
-            {
+            body={
                 'product_id': '123',
                 'dps_registration_id': None,
                 'dps_x509_certificate_common_name': None
@@ -33,8 +31,7 @@ class SearchClass(unittest.TestCase):
     def test_search_called_with_registration_id(self, mock_search):
         search(self, registration_id='123')
         mock_search.assert_called_with(
-            VERSION,
-            {
+            body={
                 'product_id': None,
                 'dps_registration_id': '123',
                 'dps_x509_certificate_common_name': None
@@ -45,8 +42,7 @@ class SearchClass(unittest.TestCase):
     def test_search_called_with_certificate_name(self, mock_search):
         search(self, certificate_name='123')
         mock_search.assert_called_with(
-            VERSION,
-            {
+            body={
                 'product_id': None,
                 'dps_registration_id': None,
                 'dps_x509_certificate_common_name': '123'
