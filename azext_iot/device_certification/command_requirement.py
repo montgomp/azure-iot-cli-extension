@@ -5,8 +5,9 @@
 # --------------------------------------------------------------------------------------------
 
 from azext_iot.device_certification.shared import BadgeType
+from azext_iot.device_certification.providers.provider import get_sdk
 
 
-def list(badge_type=BadgeType.IotDevice):
+def list(cmd, badge_type=BadgeType.IotDevice):
     # call to GET /certificationRequirements
-    return True
+    return get_sdk(cmd).get_device_certification_requirements(badge_type=badge_type)
