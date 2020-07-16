@@ -8,10 +8,11 @@ from uuid import uuid4
 from knack.log import get_logger
 from knack.util import CLIError
 from azext_iot.product.providers.provider import get_sdk
-from azext_iot.product.shared import BadgeType, AttestationType, DeviceType
+from azext_iot.product.shared import BadgeType, AttestationType
 import os
 
 logger = get_logger(__name__)
+
 
 def initialize_workspace(cmd, product_name, working_folder="PnPCert"):
     id = uuid4()
@@ -145,7 +146,18 @@ def initialize_workspace(cmd, product_name, working_folder="PnPCert"):
         )
 
 
-def create(cmd, configuration_file=None, product_id=None, device_type=None, attestation_type=None, certificate_path=None, endorsement_key=None, badge_type=BadgeType.IotDevice, models=None, provisioning=False):
+def create(
+    cmd,
+    configuration_file=None,
+    product_id=None,
+    device_type=None,
+    attestation_type=None,
+    certificate_path=None,
+    endorsement_key=None,
+    badge_type=BadgeType.IotDevice,
+    models=None,
+    provisioning=False
+):
     # call to POST /deviceTests
     if (attestation_type == AttestationType.x509.value and not certificate_path):
         raise CLIError('If attestation type is x509, certificate path is required')
@@ -153,7 +165,8 @@ def create(cmd, configuration_file=None, product_id=None, device_type=None, atte
         raise CLIError('If attestaion typs is tpm, endorsement key is required')
     if (badge_type == BadgeType.Pnp.value and not models):
         raise CLIError('If badge type is Pnp, models is required')
-    if not any([
+    if not any(
+        [
             configuration_file,
             all([
                 device_type,
@@ -161,9 +174,17 @@ def create(cmd, configuration_file=None, product_id=None, device_type=None, atte
                 attestation_type,
                 badge_type
             ])
-        ]):
+        ]
+    ):
         raise CLIError('If configuration file is not specified, attestation and device definition parameters must be specified')
-    test_configuration =  _create_from_file(configuration_file) if configuration_file else _build_test_configuration(product_id, device_type, attestation_type, certificate_path, endorsement_key, badge_type, models)
+    test_configuration = _create_from_file(configuration_file) if configuration_file else _build_test_configuration(
+        product_id,
+        device_type,
+        attestation_type,
+        certificate_path,
+        endorsement_key,
+        badge_type,
+        models)
     return get_sdk(cmd).create_device_test(provisioning, body=test_configuration)
 
 
@@ -222,7 +243,6 @@ def _process_models_directory(from_directory):
         from json import dumps
         models.append(dumps(entry_json))
     return models
-
 
 
 def _create_from_file(configuration_file):
