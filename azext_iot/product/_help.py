@@ -23,6 +23,8 @@ def load_help():
     helps["iot product requirement list"] = """
         type: command
         short-summary: Get certification requirements
+        long-summary: |
+                      Discover information about provisioning attestation methods that are supported for each badge type
         examples:
         - name: Basic usage
           text: >
@@ -100,12 +102,12 @@ def load_help():
         - name: Basic usage
           text: >
             az iot product test task create --test-id {test_id}
-        - name: Monitor to completion and return test case
+        - name: Wait for completion and return test case
           text: >
-            az iot product test task create --test-id {test_id} --monitor
-        - name: Monitor with custom polling interval to completion and return test case
+            az iot product test task create --test-id {test_id} --wait
+        - name: Wait for completion with custom polling interval to completion and return test case
           text: >
-            az iot product test task create --test-id {test_id} --monitor --monitor-interval 5
+            az iot product test task create --test-id {test_id} --wait --poll-interval 5
     """
     helps["iot product test task delete"] = """
         type: command
@@ -113,7 +115,7 @@ def load_help():
         examples:
         - name: Basic usage
           text: >
-            az iot product test task delete --test-id {test_id} --task-d {task_id}
+            az iot product test task delete --test-id {test_id} --task-id {task_id}
     """
     helps["iot product test task show"] = """
         type: command
@@ -122,7 +124,7 @@ def load_help():
         - name: Task status by --task-id
           text: >
             az iot product test task show --test-id {test_id} --task-id {task_id}
-        - name: Currently running task of produce test
+        - name: Currently running task of product test
           text: >
             az iot product test task show --test-id {test_id} --running
     """

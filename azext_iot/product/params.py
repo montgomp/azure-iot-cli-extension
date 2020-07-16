@@ -108,16 +108,16 @@ def load_product_params(self, _):
             arg_type=get_enum_type(TaskType)
         )
         c.argument(
-            'monitor',
-            options_list=['--monitor', '-m'],
-            help='Monitor task to completion and return test case data when available',
+            'wait',
+            options_list=['--wait', '-w'],
+            help='Wait for task completion and return test case data when available',
             arg_group='IoT Device Certification',
             arg_type=get_three_state_flag()
         )
         c.argument(
-            'monitor_interval',
-            options_list=['--monitor-interval', '--mi'],
-            help='Used in conjunction with --monitor. Sepcifies how frequently (in seconds) polling occurs',
+            'poll_interval',
+            options_list=['--poll-interval', '--interval'],
+            help='Used in conjunction with --wait. Sepcifies how frequently (in seconds) polling occurs',
             arg_group='IoT Device Certification',
         )
     with self.argument_context('iot product test run') as c:
@@ -128,16 +128,16 @@ def load_product_params(self, _):
             arg_group='IoT Device Certification'
         )
         c.argument(
-            'monitor',
-            options_list=['--monitor', '-m'],
-            help='Monitor test run until status is "started" or "running"',
+            'wait',
+            options_list=['--wait', '-w'],
+            help='Wait until test run until status is "started" or "running"',
             arg_group='IoT Device Certification',
             arg_type=get_three_state_flag()
         )
         c.argument(
-            'monitor_interval',
-            options_list=['--monitor-interval', '--mi'],
-            help='Used in conjunction with --monitor. Sepcifies how frequently (in seconds) polling occurs',
+            'poll_interval',
+            options_list=['--poll-interval', '--interval'],
+            help='Used in conjunction with --wait. Sepcifies how frequently (in seconds) polling occurs',
             arg_group='IoT Device Certification',
         )
         c.argument(
