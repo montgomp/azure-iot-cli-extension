@@ -7,7 +7,7 @@
 import unittest
 import mock
 from knack.util import CLIError
-from azext_iot.product.command_test import search
+from azext_iot.product.command_tests import search
 
 
 class SearchClass(unittest.TestCase):
