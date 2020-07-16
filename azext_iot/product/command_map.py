@@ -10,23 +10,23 @@ Load CLI commands
 from azure.cli.core.commands import CliCommandType
 
 requirements_ops = CliCommandType(
-    operations_tmpl='azext_iot.product.command_requirement#{}'
+    operations_tmpl='azext_iot.product.command_requirements#{}'
 )
 
 tests_ops = CliCommandType(
-    operations_tmpl='azext_iot.product.command_test#{}'
+    operations_tmpl='azext_iot.product.command_tests#{}'
 )
 
 test_tasks_ops = CliCommandType(
-    operations_tmpl='azext_iot.product.command_test_task#{}'
+    operations_tmpl='azext_iot.product.command_test_tasks#{}'
 )
 
 test_cases_ops = CliCommandType(
-    operations_tmpl='azext_iot.product.command_test_case#{}'
+    operations_tmpl='azext_iot.product.command_test_cases#{}'
 )
 
 test_runs_ops = CliCommandType(
-    operations_tmpl='azext_iot.product.command_test_run#{}'
+    operations_tmpl='azext_iot.product.command_test_runs#{}'
 )
 
 

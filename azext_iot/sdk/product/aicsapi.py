@@ -40,9 +40,6 @@ class AICSAPIConfiguration(AzureConfiguration):
 
         super(AICSAPIConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('aicsapi/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
         self.credentials = credentials
 
 

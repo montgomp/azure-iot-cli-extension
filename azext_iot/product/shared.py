@@ -18,11 +18,17 @@ class BadgeType(Enum):
     IotEdgeCompatible = "IotEdgeCompatible"
 
 
-class AuthType(Enum):
+class AttestationType(Enum):
     symmetricKey = "symmetricKey"
     tpm = "tpm"
     x509 = "x509"
 
 
-BASE_URL = "https://test.certsvc.trafficmanager.net"
+class DeviceType(Enum):
+    FinishedProduct = "FinishedProduct"
+    DevKit = "DevKit"
+
+
+BASE_URL = "https://canary.certsvc.trafficmanager.net"
+# BASE_URL = "https://test.certsvc.trafficmanager.net"
 # BASE_URL = "https://dev.certsvc.trafficmanager.net"
