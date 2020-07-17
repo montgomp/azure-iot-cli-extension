@@ -218,13 +218,13 @@ def _build_test_configuration(product_id, device_type, attestation_type, certifi
 
     return config
 
+
 def _read_certificate_from_file(certificate_path):
     with open(file=certificate_path, mode='rb') as f:
         data = f.read()
 
         from base64 import encodestring
         return encodestring(data)
-
 
 
 def _process_models_directory(from_directory):
