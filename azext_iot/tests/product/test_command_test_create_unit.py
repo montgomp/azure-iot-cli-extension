@@ -31,7 +31,7 @@ class TestTestCreateUnit(unittest.TestCase):
         with self.assertRaises(CLIError) as context:
             create(self, attestation_type='tpm')
 
-            self.assertTrue('If attestaion type is tpm, endorsement key is required', context.exception)
+            self.assertTrue('If attestation type is tpm, endorsement key is required', context.exception)
 
     def test_create_with_pnp_and_no_models_fails(self):
         with self.assertRaises(CLIError) as context:

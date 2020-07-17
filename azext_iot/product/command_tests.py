@@ -162,7 +162,7 @@ def create(
     if (attestation_type == AttestationType.x509.value and not certificate_path):
         raise CLIError('If attestation type is x509, certificate path is required')
     if (attestation_type == AttestationType.tpm.value and not endorsement_key):
-        raise CLIError('If attestaion type is tpm, endorsement key is required')
+        raise CLIError('If attestation type is tpm, endorsement key is required')
     if (badge_type == BadgeType.Pnp.value and not models):
         raise CLIError('If badge type is Pnp, models is required')
     if not any(
