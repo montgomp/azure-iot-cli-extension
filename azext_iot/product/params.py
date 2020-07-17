@@ -51,7 +51,8 @@ def load_product_params(self, _):
         c.argument(
             'configuration_file',
             options_list=['--configuration-file', '--cf'],
-            help='Path to device test JSON file. If not specified, attestation and device definition parameters must be specified',
+            help='Path to device test JSON file. '
+            'If not specified, attestation and device definition parameters must be specified',
             arg_group='IoT Device Certification'
         )
         c.argument(
@@ -64,19 +65,22 @@ def load_product_params(self, _):
         c.argument(
             'certificate_path',
             options_list=['--certificate-path', '--cp'],
-            help='The path to the file containing the primary certificate. When choosing x509 as attestation type, one of the certificate path is required',
+            help='The path to the file containing the primary certificate. '
+            'When choosing x509 as attestation type, one of the certificate path is required',
             arg_group='IoT Device Certification Attestation',
         )
         c.argument(
             'endorsement_key',
             options_list=['--endorsement-key', '--ek'],
-            help='TPM endorsement key for a TPM device. When choosing tpm as attestation type, endorsement key is required',
+            help='TPM endorsement key for a TPM device. '
+            'When choosing tpm as attestation type, endorsement key is required',
             arg_group='IoT Device Certification Attestation',
         )
         c.argument(
             'models',
             options_list=['--models', '-m'],
-            help='Path containing Azure IoT Plug and Play interfaces implemented by the device being tested. When badge type is Pnp, models is required',
+            help='Path containing Azure IoT Plug and Play interfaces implemented by the device being tested. '
+            'When badge type is Pnp, models is required',
             arg_group='IoT Device Certification Device Definition',
         )
         c.argument(

@@ -4,10 +4,14 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azext_iot.product.providers.provider import get_sdk
 from uuid import uuid4
+from knack.log import get_logger
 from knack.util import CLIError
+from azext_iot.product.providers.provider import get_sdk
+from azext_iot.product.shared import BadgeType, AttestationType
 import os
+
+logger = get_logger(__name__)
 
 
 def initialize_workspace(cmd, product_name, working_folder="PnPCert"):
@@ -142,14 +146,125 @@ def initialize_workspace(cmd, product_name, working_folder="PnPCert"):
         )
 
 
-def create(cmd, configuration_file, provisioning=False):
+def create(
+    cmd,
+    configuration_file=None,
+    product_id=None,
+    device_type=None,
+    attestation_type=None,
+    certificate_path=None,
+    endorsement_key=None,
+    badge_type=BadgeType.IotDevice.value,
+    models=None,
+    provisioning=False
+):
     # call to POST /deviceTests
-    return True
+    if (attestation_type == AttestationType.x509.value and not certificate_path):
+        raise CLIError('If attestation type is x509, certificate path is required')
+    if (attestation_type == AttestationType.tpm.value and not endorsement_key):
+        raise CLIError('If attestation type is tpm, endorsement key is required')
+    if (badge_type == BadgeType.Pnp.value and not models):
+        raise CLIError('If badge type is Pnp, models is required')
+    if not any(
+        [
+            configuration_file,
+            all([
+                device_type,
+                product_id,
+                attestation_type,
+                badge_type
+            ])
+        ]
+    ):
+        raise CLIError('If configuration file is not specified, attestation and device definition parameters must be specified')
+    test_configuration = _create_from_file(configuration_file) if configuration_file else _build_test_configuration(
+        product_id,
+        device_type,
+        attestation_type,
+        certificate_path,
+        endorsement_key,
+        badge_type,
+        models)
+    return get_sdk(cmd).create_device_test(provisioning, body=test_configuration)
+
+
+def _build_test_configuration(product_id, device_type, attestation_type, certificate_path, endorsement_key, badge_type, models):
+    config = {
+        'validationType': 'Certification',
+        'productId': product_id,
+        'deviceType': device_type,
+        'provisioningConfiguration': {
+            'type': attestation_type
+        },
+        'certificationBadgeConfigurations': [
+            {
+                'type': badge_type
+            }
+        ]
+    }
+    if (attestation_type == AttestationType.symmetricKey.value):
+        config['provisioningConfiguration']['symmetricKeyEnrollmentInformation'] = {}
+    elif (attestation_type == AttestationType.tpm.value):
+        config['provisioningConfiguration']['tpmEnrollmentInformation'] = {
+            'endorsementKey': endorsement_key
+        }
+    elif (attestation_type == AttestationType.x509.value):
+        config['provisioningConfiguration']['x509EnrollmentInformation'] = {
+            'base64EncodedX509Certificate': _read_certificate_from_file(certificate_path)
+        }
+    if (badge_type == BadgeType.Pnp.value and models):
+        models_array = _process_models_directory(models)
+        config['certificationBadgeConfigurations'][0]['digitalTwinModelDefinitions'] = models_array
+
+    return config
+
+
+def _read_certificate_from_file(certificate_path):
+    with open(file=certificate_path, mode='rb') as f:
+        data = f.read()
+
+        from base64 import encodestring
+        return encodestring(data)
+
+
+def _process_models_directory(from_directory):
+    from azext_iot.common.utility import scantree, process_json_arg
+
+    models = []
+    for entry in scantree(from_directory):
+        if not any(
+            [
+                entry.name.endswith('.json'),
+                entry.name.endswith('.dtdl')
+            ]
+        ):
+            logger.debug(
+                'Skipping {} - model file must end with .json or .dtdl'.format(entry.path)
+            )
+            continue
+        entry_json = process_json_arg(content=entry.path, argument_name=entry.name)
+        # we need to double-encode the JSON string
+        from json import dumps
+        models.append(dumps(entry_json))
+    return models
+
+
+def _create_from_file(configuration_file):
+    if not (os.path.exists(configuration_file)):
+        raise CLIError("Specified configuration file does not exist")
+
+    # read the json file and POST /deviceTests
+    with open(file=configuration_file, encoding='utf-8') as f:
+        file_contents = f.read()
+
+        from json import loads
+
+        return loads(file_contents)
 
 
 def show(cmd, test_id):
     # call to GET /deviceTests/{deviceTestId}
-    return True
+    return get_sdk(cmd).get_device_test(device_test_id=test_id)
 
 
 def update(cmd, test_id, configuration_file, provisioning=False):
