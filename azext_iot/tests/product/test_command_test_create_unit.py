@@ -31,7 +31,7 @@ class TestTestCreateUnit(unittest.TestCase):
         with self.assertRaises(CLIError) as context:
             create(self, attestation_type='tpm')
 
-            self.assertTrue('If attestaion typs is tpm, endorsement key is required', context.exception)
+            self.assertTrue('If attestaion type is tpm, endorsement key is required', context.exception)
 
     def test_create_with_pnp_and_no_models_fails(self):
         with self.assertRaises(CLIError) as context:
@@ -170,6 +170,53 @@ class TestTestCreateUnit(unittest.TestCase):
                     'type': 'x509',
                     'x509EnrollmentInformation': {
                         'base64EncodedX509Certificate': 'MockBase64String'
+                    }
+                },
+                'certificationBadgeConfigurations': [
+                    {
+                        'type': 'Pnp',
+                        'digitalTwinModelDefinitions': [
+                            '{"@id":"model1"}',
+                            '{"@id":"model2"}',
+                            '{"@id":"model3"}'
+                        ]
+                    }
+                ]
+            }
+        )
+
+    @mock.patch('azext_iot.product.command_tests._read_certificate_from_file')
+    @mock.patch('azext_iot.product.command_tests._process_models_directory')
+    @mock.patch('azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test')
+    def test_create_with_tpm(self, mock_service, mock_process_models, mock_read_certificate):
+        mock_process_models.return_value = [
+            "{\"@id\":\"model1\"}",
+            "{\"@id\":\"model2\"}",
+            "{\"@id\":\"model3\"}"
+        ]
+        create(
+            self,
+            attestation_type='tpm',
+            endorsement_key='12345',
+            product_id=self.product_id,
+            device_type='devkit',
+            models='models_folder',
+            badge_type='Pnp',
+            certificate_path='mycertificate.cer'
+        )
+
+        mock_read_certificate.assert_not_called()
+        mock_process_models.assert_called_with('models_folder')
+        mock_service.assert_called_with(
+            False,
+            body={
+                'validationType': 'Certification',
+                'productId': self.product_id,
+                'deviceType': 'devkit',
+                'provisioningConfiguration': {
+                    'type': 'tpm',
+                    'tpmEnrollmentInformation': {
+                        'endorsementKey': '12345'
                     }
                 },
                 'certificationBadgeConfigurations': [
