@@ -154,7 +154,7 @@ def create(
     attestation_type=None,
     certificate_path=None,
     endorsement_key=None,
-    badge_type=BadgeType.IotDevice,
+    badge_type=BadgeType.IotDevice.value,
     models=None,
     provisioning=False
 ):
@@ -209,18 +209,22 @@ def _build_test_configuration(product_id, device_type, attestation_type, certifi
             'endorsementKey': endorsement_key
         }
     elif (attestation_type == AttestationType.x509.value):
-        with open(file=certificate_path, mode='rb') as f:
-            data = f.read()
-            from base64 import encodestring
-            config['provisioningConfiguration']['x509EnrollmentInformation'] = {
-                'base64EncodedX509Certificate': encodestring(data)
-            }
-
-    if (models):
+        config['provisioningConfiguration']['x509EnrollmentInformation'] = {
+            'base64EncodedX509Certificate': _read_certificate_from_file(certificate_path)
+        }
+    if (badge_type == BadgeType.Pnp.value and models):
         models_array = _process_models_directory(models)
         config['certificationBadgeConfigurations'][0]['digitalTwinModelDefinitions'] = models_array
 
     return config
+
+def _read_certificate_from_file(certificate_path):
+    with open(file=certificate_path, mode='rb') as f:
+        data = f.read()
+
+        from base64 import encodestring
+        return encodestring(data)
+
 
 
 def _process_models_directory(from_directory):
