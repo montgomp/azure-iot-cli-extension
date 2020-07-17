@@ -264,7 +264,7 @@ def _create_from_file(configuration_file):
 
 def show(cmd, test_id):
     # call to GET /deviceTests/{deviceTestId}
-    return True
+    return get_sdk(cmd).get_device_test(device_test_id=test_id)
 
 
 def update(cmd, test_id, configuration_file, provisioning=False):
