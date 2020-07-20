@@ -153,10 +153,11 @@ def create(
     device_type=None,
     attestation_type=None,
     certificate_path=None,
+    connection_string=None,
     endorsement_key=None,
     badge_type=BadgeType.IotDevice.value,
     models=None,
-    provisioning=False
+    provisioning=True
 ):
     # call to POST /deviceTests
     if (attestation_type == AttestationType.x509.value and not certificate_path):
@@ -165,6 +166,10 @@ def create(
         raise CLIError('If attestation type is tpm, endorsement key is required')
     if (badge_type == BadgeType.Pnp.value and not models):
         raise CLIError('If badge type is Pnp, models is required')
+    if (badge_type == BadgeType.IotEdgeCompatible.value and not all([connection_string, attestation_type == AttestationType.connectionString.value])):
+        raise CLIError('Connection string is required for Edge Compatible modules testing')
+    if (badge_type != BadgeType.IotEdgeCompatible.value and (connection_string or attestation_type == AttestationType.connectionString.value)):
+        raise CLIError('Connection string is only available for Edge Compatible modules testing')
     if not any(
         [
             configuration_file,

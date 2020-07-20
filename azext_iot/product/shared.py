@@ -22,6 +22,7 @@ class AttestationType(Enum):
     symmetricKey = "symmetricKey"
     tpm = "tpm"
     x509 = "x509"
+    connectionString = "connectionString"
 
 
 class DeviceType(Enum):

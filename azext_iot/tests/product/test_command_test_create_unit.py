@@ -8,6 +8,7 @@ import unittest
 import mock
 from knack.util import CLIError
 from azext_iot.product.command_tests import create
+from azext_iot.product.shared import BadgeType, AttestationType, DeviceType
 
 
 class TestTestCreateUnit(unittest.TestCase):
@@ -23,50 +24,68 @@ class TestTestCreateUnit(unittest.TestCase):
 
     def test_create_with_x509_and_no_certificate_fails(self):
         with self.assertRaises(CLIError) as context:
-            create(self, attestation_type='x509')
+            create(self, attestation_type=AttestationType.x509.value)
 
-            self.assertTrue('If attestation type is x509, certificate path is required', context.exception)
+        self.assertEqual('If attestation type is x509, certificate path is required', str(context.exception))
 
     def test_create_with_tpm_and_no_endorsement_key_fails(self):
         with self.assertRaises(CLIError) as context:
-            create(self, attestation_type='tpm')
+            create(self, attestation_type=AttestationType.tpm.value)
 
-            self.assertTrue('If attestation type is tpm, endorsement key is required', context.exception)
+        self.assertEqual('If attestation type is tpm, endorsement key is required', str(context.exception))
+
+    def test_edge_module_without_connection_string_fails(self):
+        with self.assertRaises(CLIError) as context:
+            create(self, attestation_type=AttestationType.connectionString.value, badge_type=BadgeType.IotEdgeCompatible.value)
+
+        self.assertEqual('Connection string is required for Edge Compatible modules testing', str(context.exception))
+
+    def test_connection_string_for_pnp_fails(self):
+        with self.assertRaises(CLIError) as context:
+            create(self, attestation_type=AttestationType.connectionString.value, badge_type=BadgeType.Pnp.value, models='./stuff')
+
+        self.assertEqual('Connection string is only available for Edge Compatible modules testing', str(context.exception))
+
+    def test_connection_string_for_iot_device_fails(self):
+        with self.assertRaises(CLIError) as context:
+            create(self, attestation_type=AttestationType.connectionString.value)
+
+        self.assertEqual('Connection string is only available for Edge Compatible modules testing', str(context.exception))
 
     def test_create_with_pnp_and_no_models_fails(self):
         with self.assertRaises(CLIError) as context:
-            create(self, badge_type='pnp')
+            create(self, badge_type=BadgeType.Pnp.value)
 
-            self.assertTrue('If badge type is Pnp, models is required', context.exception)
+        self.assertEqual('If badge type is Pnp, models is required', str(context.exception))
 
     def test_create_with_missing_device_type_fails(self):
         with self.assertRaises(CLIError) as context:
             create(
                 self,
-                attestation_type='symmetricKey',
+                attestation_type=AttestationType.symmetricKey.value,
                 product_id=self.product_id,
-                badge_type='pnp',
+                badge_type=BadgeType.Pnp.value,
                 models='models_folder'
             )
 
-            self.assertTrue(
+        self.assertEqual(
                 'If configuration file is not specified, attestation and device definition parameters must be specified',
-                context.exception
+                str(context.exception)
             )
 
     def test_create_with_missing_product_id_fails(self):
         with self.assertRaises(CLIError) as context:
             create(
                 self,
-                attestation_type='symmetricKey',
-                device_type='devkit',
-                badge_type='pnp',
+                attestation_type=AttestationType.symmetricKey.value,
+                device_type=DeviceType.DevKit.value,
+                badge_type=BadgeType.Pnp.value,
                 models='models_folder'
             )
 
-            self.assertTrue(
+        self.assertEqual(
                 'If configuration file is not specified, attestation and device definition parameters must be specified',
-                context.exception
+                str(context.exception)
             )
 
     @mock.patch('azext_iot.product.command_tests._process_models_directory')
@@ -74,19 +93,19 @@ class TestTestCreateUnit(unittest.TestCase):
     def test_create_with_default_badge_type_doesnt_check_models(self, mock_service, mock_process_models):
         create(
             self,
-            attestation_type='symmetricKey',
+            attestation_type=AttestationType.symmetricKey.value,
             product_id=self.product_id,
-            device_type='devkit',
+            device_type=DeviceType.DevKit.value,
             models='models_folder'
         )
 
         mock_process_models.assert_not_called()
         mock_service.assert_called_with(
-            False,
+            True,
             body={
                 'validationType': 'Certification',
                 'productId': self.product_id,
-                'deviceType': 'devkit',
+                'deviceType': 'DevKit',
                 'provisioningConfiguration': {
                     'type': 'symmetricKey',
                     'symmetricKeyEnrollmentInformation': {}
@@ -107,20 +126,20 @@ class TestTestCreateUnit(unittest.TestCase):
         ]
         create(
             self,
-            attestation_type='symmetricKey',
+            attestation_type=AttestationType.symmetricKey.value,
             product_id=self.product_id,
-            device_type='devkit',
+            device_type=DeviceType.DevKit.value,
             models='models_folder',
-            badge_type='Pnp'
+            badge_type=BadgeType.Pnp.value
         )
 
         mock_process_models.assert_called_with('models_folder')
         mock_service.assert_called_with(
-            False,
+            True,
             body={
                 'validationType': 'Certification',
                 'productId': self.product_id,
-                'deviceType': 'devkit',
+                'deviceType': 'DevKit',
                 'provisioningConfiguration': {
                     'type': 'symmetricKey',
                     'symmetricKeyEnrollmentInformation': {}
@@ -150,22 +169,22 @@ class TestTestCreateUnit(unittest.TestCase):
         ]
         create(
             self,
-            attestation_type='x509',
+            attestation_type=AttestationType.x509.value,
             product_id=self.product_id,
-            device_type='devkit',
+            device_type=DeviceType.DevKit.value,
             models='models_folder',
-            badge_type='Pnp',
+            badge_type=BadgeType.Pnp.value,
             certificate_path='mycertificate.cer'
         )
 
         mock_read_certificate.assert_called_with('mycertificate.cer')
         mock_process_models.assert_called_with('models_folder')
         mock_service.assert_called_with(
-            False,
+            True,
             body={
                 'validationType': 'Certification',
                 'productId': self.product_id,
-                'deviceType': 'devkit',
+                'deviceType': 'DevKit',
                 'provisioningConfiguration': {
                     'type': 'x509',
                     'x509EnrollmentInformation': {
@@ -196,23 +215,23 @@ class TestTestCreateUnit(unittest.TestCase):
         ]
         create(
             self,
-            attestation_type='tpm',
+            attestation_type=AttestationType.tpm.value,
             endorsement_key='12345',
             product_id=self.product_id,
-            device_type='devkit',
+            device_type=DeviceType.DevKit.value,
             models='models_folder',
-            badge_type='Pnp',
+            badge_type=BadgeType.Pnp.value,
             certificate_path='mycertificate.cer'
         )
 
         mock_read_certificate.assert_not_called()
         mock_process_models.assert_called_with('models_folder')
         mock_service.assert_called_with(
-            False,
+            True,
             body={
                 'validationType': 'Certification',
                 'productId': self.product_id,
-                'deviceType': 'devkit',
+                'deviceType': 'DevKit',
                 'provisioningConfiguration': {
                     'type': 'tpm',
                     'tpmEnrollmentInformation': {
@@ -242,6 +261,6 @@ class TestTestCreateUnit(unittest.TestCase):
         create(self, configuration_file='somefile')
         mock_from_file.assert_called_with('somefile')
         mock_sdk_create.assert_called_with(
-            False,
+            True,
             body=mock_file_data
         )

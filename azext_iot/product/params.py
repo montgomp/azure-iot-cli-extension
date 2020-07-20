@@ -77,6 +77,13 @@ def load_product_params(self, _):
             arg_group='IoT Device Certification Attestation',
         )
         c.argument(
+            'connection_string',
+            options_list=['--connection-string', '--cs'],
+            help='Edge module connection string'
+            'When choosing IotEdgeCompatible badge type, connection string and attestaion-type of connection string are required',
+            arg_group='IoT Device Certification Attestation',
+        )
+        c.argument(
             'models',
             options_list=['--models', '-m'],
             help='Path containing Azure IoT Plug and Play interfaces implemented by the device being tested. '
