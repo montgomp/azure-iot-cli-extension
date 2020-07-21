@@ -131,7 +131,7 @@ def load_product_params(self, _):
     with self.argument_context('iot product test task') as c:
         c.argument(
             'task_id',
-            options_list=['--task-id', '-t'],
+            options_list=['--task-id'],
             help='The generated Id of the testing task',
             arg_group='IoT Device Certification'
         )
@@ -143,7 +143,7 @@ def load_product_params(self, _):
             arg_type=get_three_state_flag()
         )
         c.argument(
-            'type',
+            'task_type',
             options_list=['--type'],
             help='The type of task for the device test',
             arg_group='IoT Device Certification',
