@@ -15,7 +15,7 @@ class TestTestCreateInt(LiveScenarioTest):
         self.product_id = 'b70a3805-5800-4272-93f2-1b4d0150f683'
         super(TestTestCreateInt, self).__init__(test_case)
 
-    def test_create_symmetric_key(self):
+    def test_show_test(self):
         # call the GET /deviceTest/{test_id}
         output = self.cmd(
             'iot product test show -t {}'.format(

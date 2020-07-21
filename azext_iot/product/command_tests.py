@@ -316,14 +316,15 @@ def update(
             device_type,
             product_id,
             attestation_type,
-            badge_type
+            badge_type,
+            models
         ]
     ):
         raise CLIError('Configuration file, attestation information, or device configuration must be specified')
 
     import six
     import json
-    test_configuration = get_sdk(cmd=cmd).get_device_test(device_test_id=test_id)
+    test_configuration = get_sdk(cmd=cmd).get_device_test(device_test_id=test_id, raw=True).response.json()
     six.print_(test_configuration)
     # update product_id
     if (product_id):
@@ -353,12 +354,20 @@ def update(
             test_configuration['provisioningConfiguration']['deviceConnectionString'] = connection_string
 
     # reset PnP models
-    if (badge_type == BadgeType.Pnp.value and models):
+    badge_config = test_configuration['certificationBadgeConfigurations']
+    six.print_(badge_config)
+    if ((badge_type == BadgeType.Pnp.value or badge_config[0]['type'].lower() == BadgeType.Pnp.value.lower()) and models):
         models_array = _process_models_directory(models)
         test_configuration['certificationBadgeConfigurations'] = [
             {
-                'type': badge_type,
+                'type': BadgeType.Pnp.value,
                 'digitalTwinModelDefinitions': models_array
+            }
+        ]
+    elif badge_type:
+        test_configuration['certificationBadgeConfigurations'] = [
+            {
+                'type': badge_type
             }
         ]
 

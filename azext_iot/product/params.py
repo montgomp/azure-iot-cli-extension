@@ -47,7 +47,6 @@ def load_product_params(self, _):
             + 'Only applies to SymmetricKey and ConnectionString provisioning types',
             arg_group='IoT Device Certification'
         )
-    with self.argument_context('iot product test create') as c:
         c.argument(
             'configuration_file',
             options_list=['--configuration-file', '--cf'],
