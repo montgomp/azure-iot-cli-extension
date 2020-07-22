@@ -15,25 +15,15 @@ from msrest.serialization import Model
 class IotEdgeCompatibleCertificationBadgeConfiguration(Model):
     """IotEdgeCompatibleCertificationBadgeConfiguration.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param os: Required.
-    :type os: str
     :param type: Possible values include: 'IotDevice', 'Pnp',
      'IotEdgeCompatible'
     :type type: str or ~product.models.enum
     """
 
-    _validation = {
-        'os': {'required': True},
-    }
-
     _attribute_map = {
-        'os': {'key': 'os', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(IotEdgeCompatibleCertificationBadgeConfiguration, self).__init__(**kwargs)
-        self.os = kwargs.get('os', None)
         self.type = kwargs.get('type', None)
