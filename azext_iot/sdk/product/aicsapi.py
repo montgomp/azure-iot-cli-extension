@@ -325,13 +325,15 @@ class AICSAPI(SDKClient):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204, 400]:
+        if response.status_code not in [200, 400]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeviceTest', response)
         if response.status_code == 400:
             deserialized = self._deserialize('object', response)
 
