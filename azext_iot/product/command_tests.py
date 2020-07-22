@@ -375,8 +375,9 @@ def update(
     return get_sdk(cmd).update_device_test(
         device_test_id=test_id,
         generate_provisioning_configuration=provisioning,
-        body=test_configuration
-    )
+        body=test_configuration,
+        raw=True
+    ).response.json()
 
 
 def search(cmd, product_id=None, registration_id=None, certificate_name=None):
