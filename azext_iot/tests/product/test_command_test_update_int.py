@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------------------------
 
 from azure.cli.testsdk import LiveScenarioTest
-from azext_iot.product.shared import AttestationType, BadgeType
+from azext_iot.product.shared import AttestationType
 
 
 class TestTestCreateInt(LiveScenarioTest):

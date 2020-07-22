@@ -166,9 +166,18 @@ def create(
         raise CLIError('If attestation type is tpm, endorsement key is required')
     if (badge_type == BadgeType.Pnp.value and not models):
         raise CLIError('If badge type is Pnp, models is required')
-    if (badge_type == BadgeType.IotEdgeCompatible.value and not all([connection_string, attestation_type == AttestationType.connectionString.value])):
+    if (
+        badge_type == BadgeType.IotEdgeCompatible.value and
+        not all([
+            connection_string,
+            attestation_type == AttestationType.connectionString.value
+        ])
+    ):
         raise CLIError('Connection string is required for Edge Compatible modules testing')
-    if (badge_type != BadgeType.IotEdgeCompatible.value and (connection_string or attestation_type == AttestationType.connectionString.value)):
+    if (
+        badge_type != BadgeType.IotEdgeCompatible.value and
+        (connection_string or attestation_type == AttestationType.connectionString.value)
+    ):
         raise CLIError('Connection string is only available for Edge Compatible modules testing')
     if not any(
         [
@@ -194,7 +203,16 @@ def create(
     return get_sdk(cmd).create_device_test(provisioning, body=test_configuration)
 
 
-def _build_test_configuration(product_id, device_type, attestation_type, certificate_path, endorsement_key, connection_string, badge_type, models):
+def _build_test_configuration(
+    product_id,
+    device_type,
+    attestation_type,
+    certificate_path,
+    endorsement_key,
+    connection_string,
+    badge_type,
+    models
+):
     config = {
         'validationType': 'Certification',
         'productId': product_id,
@@ -285,9 +303,10 @@ def update(
     connection_string=None,
     endorsement_key=None,
     badge_type=None,
-    models=None):
+    models=None
+):
     # call to PUT /deviceTests
-    provisioning=False
+    provisioning = False
 
     # verify required parameters for vairous options
     if (attestation_type == AttestationType.x509.value and not certificate_path):
@@ -296,9 +315,17 @@ def update(
         raise CLIError('If attestation type is tpm, endorsement key is required')
     if (badge_type == BadgeType.Pnp.value and not models):
         raise CLIError('If badge type is Pnp, models is required')
-    if (badge_type == BadgeType.IotEdgeCompatible.value and not all([connection_string, attestation_type == AttestationType.connectionString.value])):
+    if (
+        badge_type == BadgeType.IotEdgeCompatible.value and
+        not all([
+            connection_string,
+            attestation_type == AttestationType.connectionString.value
+        ])
+    ):
         raise CLIError('Connection string is required for Edge Compatible modules testing')
-    if (badge_type != BadgeType.IotEdgeCompatible.value and (connection_string or attestation_type == AttestationType.connectionString.value)):
+    if (
+        badge_type != BadgeType.IotEdgeCompatible.value and (
+            connection_string or attestation_type == AttestationType.connectionString.value)):
         raise CLIError('Connection string is only available for Edge Compatible modules testing')
 
     if configuration_file:
@@ -331,7 +358,7 @@ def update(
             'dpsRegistrationId': registration_id
 
         }
-        provisioning=True
+        provisioning = True
         if (attestation_type == AttestationType.symmetricKey.value):
             test_configuration['provisioningConfiguration']['symmetricKeyEnrollmentInformation'] = {}
         elif (attestation_type == AttestationType.tpm.value):

@@ -7,6 +7,8 @@
 from azure.cli.testsdk import LiveScenarioTest
 from azext_iot.product.shared import AttestationType, BadgeType, DeviceType
 from uuid import uuid4
+
+
 class TestTestCreateInt(LiveScenarioTest):
     def __init__(
         self, test_case

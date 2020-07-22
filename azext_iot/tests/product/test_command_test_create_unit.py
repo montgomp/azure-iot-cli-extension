@@ -42,7 +42,12 @@ class TestTestCreateUnit(unittest.TestCase):
 
     def test_connection_string_for_pnp_fails(self):
         with self.assertRaises(CLIError) as context:
-            create(self, attestation_type=AttestationType.connectionString.value, badge_type=BadgeType.Pnp.value, models='./stuff')
+            create(
+                self,
+                attestation_type=AttestationType.connectionString.value,
+                badge_type=BadgeType.Pnp.value,
+                models='./stuff'
+            )
 
         self.assertEqual('Connection string is only available for Edge Compatible modules testing', str(context.exception))
 
@@ -69,9 +74,9 @@ class TestTestCreateUnit(unittest.TestCase):
             )
 
         self.assertEqual(
-                'If configuration file is not specified, attestation and device definition parameters must be specified',
-                str(context.exception)
-            )
+            'If configuration file is not specified, attestation and device definition parameters must be specified',
+            str(context.exception)
+        )
 
     def test_create_with_missing_product_id_fails(self):
         with self.assertRaises(CLIError) as context:
@@ -84,9 +89,9 @@ class TestTestCreateUnit(unittest.TestCase):
             )
 
         self.assertEqual(
-                'If configuration file is not specified, attestation and device definition parameters must be specified',
-                str(context.exception)
-            )
+            'If configuration file is not specified, attestation and device definition parameters must be specified',
+            str(context.exception)
+        )
 
     @mock.patch('azext_iot.product.command_tests._process_models_directory')
     @mock.patch('azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test')

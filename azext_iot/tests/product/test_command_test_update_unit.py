@@ -8,7 +8,7 @@ import unittest
 import mock
 from knack.util import CLIError
 from azext_iot.product.command_tests import update
-from azext_iot.product.shared import BadgeType, AttestationType, DeviceType
+from azext_iot.product.shared import BadgeType, AttestationType
 
 
 class TestTestUpdateUnit(unittest.TestCase):
@@ -38,13 +38,24 @@ class TestTestUpdateUnit(unittest.TestCase):
 
     def test_edge_module_without_connection_string_fails(self):
         with self.assertRaises(CLIError) as context:
-            update(self, test_id=self.test_id, attestation_type=AttestationType.connectionString.value, badge_type=BadgeType.IotEdgeCompatible.value)
+            update(
+                self,
+                test_id=self.test_id,
+                attestation_type=AttestationType.connectionString.value,
+                badge_type=BadgeType.IotEdgeCompatible.value
+            )
 
         self.assertEqual('Connection string is required for Edge Compatible modules testing', str(context.exception))
 
     def test_connection_string_for_pnp_fails(self):
         with self.assertRaises(CLIError) as context:
-            update(self, test_id=self.test_id, attestation_type=AttestationType.connectionString.value, badge_type=BadgeType.Pnp.value, models='./stuff')
+            update(
+                self,
+                test_id=self.test_id,
+                attestation_type=AttestationType.connectionString.value,
+                badge_type=BadgeType.Pnp.value,
+                models='./stuff'
+            )
 
         self.assertEqual('Connection string is only available for Edge Compatible modules testing', str(context.exception))
 
@@ -71,7 +82,7 @@ class TestTestUpdateUnit(unittest.TestCase):
         mock_test_data = {
             'certificationBadgeConfigurations': [
                 {
-                'type': 'IotDevice'
+                    'type': 'IotDevice'
                 }
             ],
             'deviceType': 'DevKit',
@@ -83,10 +94,10 @@ class TestTestUpdateUnit(unittest.TestCase):
                 'dpsRegistrationId': 'DPS_1234',
                 'region': 'region_1',
                 'symmetricKeyEnrollmentInformation': {
-                'primaryKey': 'primary_key',
-                'registrationId': 'registration_1234',
-                'scopeId': 'scope_1',
-                'secondaryKey': 'secondary_key'
+                    'primaryKey': 'primary_key',
+                    'registrationId': 'registration_1234',
+                    'scopeId': 'scope_1',
+                    'secondaryKey': 'secondary_key'
                 },
                 'tpmEnrollmentInformation': None,
                 'type': 'SymmetricKey',
@@ -105,23 +116,23 @@ class TestTestUpdateUnit(unittest.TestCase):
             generate_provisioning_configuration=True,
             raw=True,
             body={
-            'certificationBadgeConfigurations': [
-                {
-                'type': 'IotDevice'
-                }
-            ],
-            'deviceType': 'DevKit',
-            'id': self.test_id,
-            'productId': 'product_1234',
-            'provisioningConfiguration': {
-                'dpsRegistrationId': 'DPS_1234',
-                'type': AttestationType.x509.value,
-                'x509EnrollmentInformation': {
-                    'base64EncodedX509Certificate': 'MockBase64String'
-                }
-            },
-            'validationType': 'Certification'
-        }
+                'certificationBadgeConfigurations': [
+                    {
+                        'type': 'IotDevice'
+                    }
+                ],
+                'deviceType': 'DevKit',
+                'id': self.test_id,
+                'productId': 'product_1234',
+                'provisioningConfiguration': {
+                    'dpsRegistrationId': 'DPS_1234',
+                    'type': AttestationType.x509.value,
+                    'x509EnrollmentInformation': {
+                        'base64EncodedX509Certificate': 'MockBase64String'
+                    }
+                },
+                'validationType': 'Certification'
+            }
         )
 
     @mock.patch('azext_iot.sdk.product.aicsapi.AICSAPI.update_device_test')
@@ -130,7 +141,7 @@ class TestTestUpdateUnit(unittest.TestCase):
         mock_test_data = {
             'certificationBadgeConfigurations': [
                 {
-                'type': 'IotDevice'
+                    'type': 'IotDevice'
                 }
             ],
             'deviceType': 'DevKit',
@@ -142,10 +153,10 @@ class TestTestUpdateUnit(unittest.TestCase):
                 'dpsRegistrationId': 'DPS_1234',
                 'region': 'region_1',
                 'symmetricKeyEnrollmentInformation': {
-                'primaryKey': 'primary_key',
-                'registrationId': 'registration_1234',
-                'scopeId': 'scope_1',
-                'secondaryKey': 'secondary_key'
+                    'primaryKey': 'primary_key',
+                    'registrationId': 'registration_1234',
+                    'scopeId': 'scope_1',
+                    'secondaryKey': 'secondary_key'
                 },
                 'tpmEnrollmentInformation': None,
                 'type': 'SymmetricKey',
@@ -163,23 +174,23 @@ class TestTestUpdateUnit(unittest.TestCase):
             generate_provisioning_configuration=True,
             raw=True,
             body={
-            'certificationBadgeConfigurations': [
-                {
-                'type': 'IotDevice'
-                }
-            ],
-            'deviceType': 'DevKit',
-            'id': self.test_id,
-            'productId': 'product_1234',
-            'provisioningConfiguration': {
-                'dpsRegistrationId': 'DPS_1234',
-                'type': AttestationType.tpm.value,
-                'tpmEnrollmentInformation': {
-                    'endorsementKey': 'endorsement_key'
-                }
-            },
-            'validationType': 'Certification'
-        }
+                'certificationBadgeConfigurations': [
+                    {
+                        'type': 'IotDevice'
+                    }
+                ],
+                'deviceType': 'DevKit',
+                'id': self.test_id,
+                'productId': 'product_1234',
+                'provisioningConfiguration': {
+                    'dpsRegistrationId': 'DPS_1234',
+                    'type': AttestationType.tpm.value,
+                    'tpmEnrollmentInformation': {
+                        'endorsementKey': 'endorsement_key'
+                    }
+                },
+                'validationType': 'Certification'
+            }
         )
 
     @mock.patch('azext_iot.sdk.product.aicsapi.AICSAPI.update_device_test')
@@ -188,7 +199,7 @@ class TestTestUpdateUnit(unittest.TestCase):
         mock_test_data = {
             'certificationBadgeConfigurations': [
                 {
-                'type': 'IotDevice'
+                    'type': 'IotDevice'
                 }
             ],
             'deviceType': 'DevKit',
@@ -200,10 +211,10 @@ class TestTestUpdateUnit(unittest.TestCase):
                 'dpsRegistrationId': 'DPS_1234',
                 'region': 'region_1',
                 'symmetricKeyEnrollmentInformation': {
-                'primaryKey': 'primary_key',
-                'registrationId': 'registration_1234',
-                'scopeId': 'scope_1',
-                'secondaryKey': 'secondary_key'
+                    'primaryKey': 'primary_key',
+                    'registrationId': 'registration_1234',
+                    'scopeId': 'scope_1',
+                    'secondaryKey': 'secondary_key'
                 },
                 'tpmEnrollmentInformation': None,
                 'type': 'SymmetricKey',
@@ -221,21 +232,21 @@ class TestTestUpdateUnit(unittest.TestCase):
             generate_provisioning_configuration=True,
             raw=True,
             body={
-            'certificationBadgeConfigurations': [
-                {
-                'type': 'IotDevice'
-                }
-            ],
-            'deviceType': 'DevKit',
-            'id': self.test_id,
-            'productId': 'product_1234',
-            'provisioningConfiguration': {
-                'dpsRegistrationId': 'DPS_1234',
-                'type': AttestationType.symmetricKey.value,
-                'symmetricKeyEnrollmentInformation': {}
-            },
-            'validationType': 'Certification'
-        }
+                'certificationBadgeConfigurations': [
+                    {
+                        'type': 'IotDevice'
+                    }
+                ],
+                'deviceType': 'DevKit',
+                'id': self.test_id,
+                'productId': 'product_1234',
+                'provisioningConfiguration': {
+                    'dpsRegistrationId': 'DPS_1234',
+                    'type': AttestationType.symmetricKey.value,
+                    'symmetricKeyEnrollmentInformation': {}
+                },
+                'validationType': 'Certification'
+            }
         )
 
     @mock.patch('azext_iot.product.command_tests._process_models_directory')
@@ -250,7 +261,7 @@ class TestTestUpdateUnit(unittest.TestCase):
         mock_test_data = {
             'certificationBadgeConfigurations': [
                 {
-                'type': 'IotDevice'
+                    'type': 'IotDevice'
                 }
             ],
             'deviceType': 'DevKit',
@@ -262,10 +273,10 @@ class TestTestUpdateUnit(unittest.TestCase):
                 'dpsRegistrationId': 'DPS_1234',
                 'region': 'region_1',
                 'symmetricKeyEnrollmentInformation': {
-                'primaryKey': 'primary_key',
-                'registrationId': 'registration_1234',
-                'scopeId': 'scope_1',
-                'secondaryKey': 'secondary_key'
+                    'primaryKey': 'primary_key',
+                    'registrationId': 'registration_1234',
+                    'scopeId': 'scope_1',
+                    'secondaryKey': 'secondary_key'
                 },
                 'tpmEnrollmentInformation': None,
                 'type': 'SymmetricKey',
@@ -284,36 +295,36 @@ class TestTestUpdateUnit(unittest.TestCase):
             generate_provisioning_configuration=False,
             raw=True,
             body={
-            'certificationBadgeConfigurations': [
-                {
-                    'type': BadgeType.Pnp.value,
-                    'digitalTwinModelDefinitions': [
-                        '{"@id":"model1"}',
-                        '{"@id":"model2"}',
-                        '{"@id":"model3"}'
-                    ]
-                }
-            ],
-            'deviceType': 'DevKit',
-            'id': self.test_id,
-            'productId': 'product_1234',
-            'provisioningConfiguration': {
-                'deviceConnectionString': None,
-                'deviceId': 'device_1234',
-                'dpsRegistrationId': 'DPS_1234',
-                'region': 'region_1',
-                'symmetricKeyEnrollmentInformation': {
-                'primaryKey': 'primary_key',
-                'registrationId': 'registration_1234',
-                'scopeId': 'scope_1',
-                'secondaryKey': 'secondary_key'
+                'certificationBadgeConfigurations': [
+                    {
+                        'type': BadgeType.Pnp.value,
+                        'digitalTwinModelDefinitions': [
+                            '{"@id":"model1"}',
+                            '{"@id":"model2"}',
+                            '{"@id":"model3"}'
+                        ]
+                    }
+                ],
+                'deviceType': 'DevKit',
+                'id': self.test_id,
+                'productId': 'product_1234',
+                'provisioningConfiguration': {
+                    'deviceConnectionString': None,
+                    'deviceId': 'device_1234',
+                    'dpsRegistrationId': 'DPS_1234',
+                    'region': 'region_1',
+                    'symmetricKeyEnrollmentInformation': {
+                        'primaryKey': 'primary_key',
+                        'registrationId': 'registration_1234',
+                        'scopeId': 'scope_1',
+                        'secondaryKey': 'secondary_key'
+                    },
+                    'tpmEnrollmentInformation': None,
+                    'type': 'SymmetricKey',
+                    'x509EnrollmentInformation': None
                 },
-                'tpmEnrollmentInformation': None,
-                'type': 'SymmetricKey',
-                'x509EnrollmentInformation': None
-            },
-            'validationType': 'Certification'
-        }
+                'validationType': 'Certification'
+            }
         )
 
     @mock.patch('azext_iot.product.command_tests._process_models_directory')
@@ -340,10 +351,10 @@ class TestTestUpdateUnit(unittest.TestCase):
                 'dpsRegistrationId': 'DPS_1234',
                 'region': 'region_1',
                 'symmetricKeyEnrollmentInformation': {
-                'primaryKey': 'primary_key',
-                'registrationId': 'registration_1234',
-                'scopeId': 'scope_1',
-                'secondaryKey': 'secondary_key'
+                    'primaryKey': 'primary_key',
+                    'registrationId': 'registration_1234',
+                    'scopeId': 'scope_1',
+                    'secondaryKey': 'secondary_key'
                 },
                 'tpmEnrollmentInformation': None,
                 'type': 'SymmetricKey',
@@ -362,29 +373,29 @@ class TestTestUpdateUnit(unittest.TestCase):
             generate_provisioning_configuration=False,
             raw=True,
             body={
-            'certificationBadgeConfigurations': [
-                {
-                    'type': BadgeType.IotDevice.value,
-                }
-            ],
-            'deviceType': 'DevKit',
-            'id': self.test_id,
-            'productId': 'product_1234',
-            'provisioningConfiguration': {
-                'deviceConnectionString': None,
-                'deviceId': 'device_1234',
-                'dpsRegistrationId': 'DPS_1234',
-                'region': 'region_1',
-                'symmetricKeyEnrollmentInformation': {
-                'primaryKey': 'primary_key',
-                'registrationId': 'registration_1234',
-                'scopeId': 'scope_1',
-                'secondaryKey': 'secondary_key'
+                'certificationBadgeConfigurations': [
+                    {
+                        'type': BadgeType.IotDevice.value,
+                    }
+                ],
+                'deviceType': 'DevKit',
+                'id': self.test_id,
+                'productId': 'product_1234',
+                'provisioningConfiguration': {
+                    'deviceConnectionString': None,
+                    'deviceId': 'device_1234',
+                    'dpsRegistrationId': 'DPS_1234',
+                    'region': 'region_1',
+                    'symmetricKeyEnrollmentInformation': {
+                        'primaryKey': 'primary_key',
+                        'registrationId': 'registration_1234',
+                        'scopeId': 'scope_1',
+                        'secondaryKey': 'secondary_key'
+                    },
+                    'tpmEnrollmentInformation': None,
+                    'type': 'SymmetricKey',
+                    'x509EnrollmentInformation': None
                 },
-                'tpmEnrollmentInformation': None,
-                'type': 'SymmetricKey',
-                'x509EnrollmentInformation': None
-            },
-            'validationType': 'Certification'
-        }
+                'validationType': 'Certification'
+            }
         )

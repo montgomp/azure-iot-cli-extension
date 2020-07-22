@@ -12,7 +12,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
     def __init__(self, _):
         super(TestProductDeviceTestTasks, self).__init__(_)
         self.kwargs.update(
-            {"device_test_id": "4afc5755-3167-4c72-84f5-14b136e376e0",}
+            {"device_test_id": "4afc5755-3167-4c72-84f5-14b136e376e0"}
         )
 
     def setup(self):
