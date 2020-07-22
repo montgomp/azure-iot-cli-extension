@@ -22,6 +22,7 @@ class AttestationType(Enum):
     symmetricKey = "symmetricKey"
     tpm = "tpm"
     x509 = "x509"
+    connectionString = "connectionString"
 
 
 class DeviceType(Enum):
@@ -38,6 +39,6 @@ class DeviceTestTaskStatus(Enum):
     cancelled = "Cancelled"
 
 
-BASE_URL = "https://canary.certsvc.trafficmanager.net"
-# BASE_URL = "https://test.certsvc.trafficmanager.net"
+# BASE_URL = "https://canary.certsvc.trafficmanager.net"
+BASE_URL = "https://test.certsvc.trafficmanager.net"
 # BASE_URL = "https://dev.certsvc.trafficmanager.net"

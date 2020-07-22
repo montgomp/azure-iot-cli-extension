@@ -107,7 +107,7 @@ class TestTaskShow(unittest.TestCase):
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.get_device_test_task")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.get_running_device_test_tasks")
     def test_task_show_task(self, mock_get_running, mock_get_task):
-        result = show(self, test_id=device_test_id, task_id="456")
+        show(self, test_id=device_test_id, task_id="456")
         mock_get_task.assert_called_with(task_id="456", device_test_id=device_test_id)
         self.assertEqual(mock_get_task.call_count, 1)
         self.assertEqual(mock_get_running.call_count, 0)
@@ -279,7 +279,7 @@ class TestTasksSDK(object):
         req = service_client_get_running.calls[0].request
         url = req.url
         assert (
-            "deviceTests/{}/tasks/running".format(device_test_id, device_test_task_id)
+            "deviceTests/{}/tasks/running".format(device_test_id)
             in url
         )
         assert req.method == "GET"

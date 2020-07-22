@@ -47,7 +47,6 @@ def load_product_params(self, _):
             + 'Only applies to SymmetricKey and ConnectionString provisioning types',
             arg_group='IoT Device Certification'
         )
-    with self.argument_context('iot product test create') as c:
         c.argument(
             'configuration_file',
             options_list=['--configuration-file', '--cf'],
@@ -74,6 +73,13 @@ def load_product_params(self, _):
             options_list=['--endorsement-key', '--ek'],
             help='TPM endorsement key for a TPM device. '
             'When choosing tpm as attestation type, endorsement key is required',
+            arg_group='IoT Device Certification Attestation',
+        )
+        c.argument(
+            'connection_string',
+            options_list=['--connection-string', '--cs'],
+            help='Edge module connection string'
+            'When choosing IotEdgeCompatible badge type, connection string and attestaion-type of connection string are required',
             arg_group='IoT Device Certification Attestation',
         )
         c.argument(

@@ -153,10 +153,11 @@ def create(
     device_type=None,
     attestation_type=None,
     certificate_path=None,
+    connection_string=None,
     endorsement_key=None,
     badge_type=BadgeType.IotDevice.value,
     models=None,
-    provisioning=False
+    provisioning=True
 ):
     # call to POST /deviceTests
     if (attestation_type == AttestationType.x509.value and not certificate_path):
@@ -165,6 +166,19 @@ def create(
         raise CLIError('If attestation type is tpm, endorsement key is required')
     if (badge_type == BadgeType.Pnp.value and not models):
         raise CLIError('If badge type is Pnp, models is required')
+    if (
+        badge_type == BadgeType.IotEdgeCompatible.value and
+        not all([
+            connection_string,
+            attestation_type == AttestationType.connectionString.value
+        ])
+    ):
+        raise CLIError('Connection string is required for Edge Compatible modules testing')
+    if (
+        badge_type != BadgeType.IotEdgeCompatible.value and
+        (connection_string or attestation_type == AttestationType.connectionString.value)
+    ):
+        raise CLIError('Connection string is only available for Edge Compatible modules testing')
     if not any(
         [
             configuration_file,
@@ -178,17 +192,27 @@ def create(
     ):
         raise CLIError('If configuration file is not specified, attestation and device definition parameters must be specified')
     test_configuration = _create_from_file(configuration_file) if configuration_file else _build_test_configuration(
-        product_id,
-        device_type,
-        attestation_type,
-        certificate_path,
-        endorsement_key,
-        badge_type,
-        models)
+        product_id=product_id,
+        device_type=device_type,
+        attestation_type=attestation_type,
+        certificate_path=certificate_path,
+        endorsement_key=endorsement_key,
+        badge_type=badge_type,
+        connection_string=connection_string,
+        models=models)
     return get_sdk(cmd).create_device_test(provisioning, body=test_configuration)
 
 
-def _build_test_configuration(product_id, device_type, attestation_type, certificate_path, endorsement_key, badge_type, models):
+def _build_test_configuration(
+    product_id,
+    device_type,
+    attestation_type,
+    certificate_path,
+    endorsement_key,
+    connection_string,
+    badge_type,
+    models
+):
     config = {
         'validationType': 'Certification',
         'productId': product_id,
@@ -212,6 +236,9 @@ def _build_test_configuration(product_id, device_type, attestation_type, certifi
         config['provisioningConfiguration']['x509EnrollmentInformation'] = {
             'base64EncodedX509Certificate': _read_certificate_from_file(certificate_path)
         }
+    elif (attestation_type == AttestationType.connectionString.value):
+        config['provisioningConfiguration']['deviceConnectionString'] = connection_string
+
     if (badge_type == BadgeType.Pnp.value and models):
         models_array = _process_models_directory(models)
         config['certificationBadgeConfigurations'][0]['digitalTwinModelDefinitions'] = models_array
@@ -267,9 +294,108 @@ def show(cmd, test_id):
     return get_sdk(cmd).get_device_test(device_test_id=test_id)
 
 
-def update(cmd, test_id, configuration_file, provisioning=False):
-    # call to POST /deviceTests
-    return True
+def update(
+    cmd,
+    test_id,
+    configuration_file=None,
+    attestation_type=None,
+    certificate_path=None,
+    connection_string=None,
+    endorsement_key=None,
+    badge_type=None,
+    models=None
+):
+    # call to PUT /deviceTests
+    provisioning = False
+
+    # verify required parameters for vairous options
+    if (attestation_type == AttestationType.x509.value and not certificate_path):
+        raise CLIError('If attestation type is x509, certificate path is required')
+    if (attestation_type == AttestationType.tpm.value and not endorsement_key):
+        raise CLIError('If attestation type is tpm, endorsement key is required')
+    if (badge_type == BadgeType.Pnp.value and not models):
+        raise CLIError('If badge type is Pnp, models is required')
+    if (
+        badge_type == BadgeType.IotEdgeCompatible.value and
+        not all([
+            connection_string,
+            attestation_type == AttestationType.connectionString.value
+        ])
+    ):
+        raise CLIError('Connection string is required for Edge Compatible modules testing')
+    if (
+        badge_type != BadgeType.IotEdgeCompatible.value and (
+            connection_string or attestation_type == AttestationType.connectionString.value)):
+        raise CLIError('Connection string is only available for Edge Compatible modules testing')
+
+    if configuration_file:
+        test_configuration = _create_from_file(configuration_file)
+        return get_sdk(cmd).update_device_test(
+            device_test_id=test_id,
+            generate_provisioning_configuration=provisioning,
+            body=test_configuration
+        )
+
+    if not any(
+        [
+            attestation_type,
+            badge_type,
+            models
+        ]
+    ):
+        raise CLIError('Configuration file, attestation information, or device configuration must be specified')
+
+    test_configuration = get_sdk(cmd=cmd).get_device_test(device_test_id=test_id, raw=True).response.json()
+
+    provisioning_configuration = test_configuration['provisioningConfiguration']
+    registration_id = provisioning_configuration['dpsRegistrationId']
+
+    # change attestation
+    if(attestation_type):
+        # reset the provisioningConfiguration
+        test_configuration['provisioningConfiguration'] = {
+            'type': attestation_type,
+            'dpsRegistrationId': registration_id
+
+        }
+        provisioning = True
+        if (attestation_type == AttestationType.symmetricKey.value):
+            test_configuration['provisioningConfiguration']['symmetricKeyEnrollmentInformation'] = {}
+        elif (attestation_type == AttestationType.tpm.value):
+            test_configuration['provisioningConfiguration']['tpmEnrollmentInformation'] = {
+                'endorsementKey': endorsement_key
+            }
+        elif (attestation_type == AttestationType.x509.value):
+            test_configuration['provisioningConfiguration']['x509EnrollmentInformation'] = {
+                'base64EncodedX509Certificate': _read_certificate_from_file(certificate_path)
+            }
+        elif (attestation_type == AttestationType.connectionString.value):
+            test_configuration['provisioningConfiguration']['deviceConnectionString'] = connection_string
+
+    # reset PnP models
+    badge_config = test_configuration['certificationBadgeConfigurations']
+
+    if ((badge_type == BadgeType.Pnp.value or badge_config[0]['type'].lower() == BadgeType.Pnp.value.lower()) and models):
+        models_array = _process_models_directory(models)
+        test_configuration['certificationBadgeConfigurations'] = [
+            {
+                'type': BadgeType.Pnp.value,
+                'digitalTwinModelDefinitions': models_array
+            }
+        ]
+    elif badge_type:
+        test_configuration['certificationBadgeConfigurations'] = [
+            {
+                'type': badge_type
+            }
+        ]
+
+    return get_sdk(cmd).update_device_test(
+        device_test_id=test_id,
+        generate_provisioning_configuration=provisioning,
+        body=test_configuration,
+        raw=True
+    ).response.json()
 
 
 def search(cmd, product_id=None, registration_id=None, certificate_name=None):
