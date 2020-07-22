@@ -280,8 +280,6 @@ def update(
     cmd,
     test_id,
     configuration_file=None,
-    product_id=None,
-    device_type=None,
     attestation_type=None,
     certificate_path=None,
     connection_string=None,
@@ -313,8 +311,6 @@ def update(
 
     if not any(
         [
-            device_type,
-            product_id,
             attestation_type,
             badge_type,
             models
@@ -322,17 +318,7 @@ def update(
     ):
         raise CLIError('Configuration file, attestation information, or device configuration must be specified')
 
-    import six
-    import json
     test_configuration = get_sdk(cmd=cmd).get_device_test(device_test_id=test_id, raw=True).response.json()
-    six.print_(test_configuration)
-    # update product_id
-    if (product_id):
-        test_configuration['productId'] = product_id
-
-    #update device_type
-    if(device_type):
-        test_configuration['deviceType'] = device_type
 
     # change attestation
     if(attestation_type):
@@ -340,6 +326,7 @@ def update(
         test_configuration['provisioningConfiguration'] = {
             'type': attestation_type
         }
+        provisioning=True
         if (attestation_type == AttestationType.symmetricKey.value):
             test_configuration['provisioningConfiguration']['symmetricKeyEnrollmentInformation'] = {}
         elif (attestation_type == AttestationType.tpm.value):
@@ -355,7 +342,7 @@ def update(
 
     # reset PnP models
     badge_config = test_configuration['certificationBadgeConfigurations']
-    six.print_(badge_config)
+
     if ((badge_type == BadgeType.Pnp.value or badge_config[0]['type'].lower() == BadgeType.Pnp.value.lower()) and models):
         models_array = _process_models_directory(models)
         test_configuration['certificationBadgeConfigurations'] = [
@@ -371,7 +358,6 @@ def update(
             }
         ]
 
-    six.print_(test_configuration)
     return get_sdk(cmd).update_device_test(
         device_test_id=test_id,
         generate_provisioning_configuration=provisioning,
