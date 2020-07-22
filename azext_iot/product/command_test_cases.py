@@ -9,7 +9,6 @@ from azext_iot.product.shared import BadgeType
 
 def list(test_id):
     # call to GET /deviceTests/{deviceTestId}/testCases
-    '61c5939c-bf0e-4116-b62c-fe43ea7f8dd5'
     return True
 
 
