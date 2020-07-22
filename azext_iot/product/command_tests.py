@@ -285,9 +285,9 @@ def update(
     connection_string=None,
     endorsement_key=None,
     badge_type=None,
-    models=None,
-    provisioning=False):
+    models=None):
     # call to PUT /deviceTests
+    provisioning=False
 
     # verify required parameters for vairous options
     if (attestation_type == AttestationType.x509.value and not certificate_path):
@@ -320,11 +320,16 @@ def update(
 
     test_configuration = get_sdk(cmd=cmd).get_device_test(device_test_id=test_id, raw=True).response.json()
 
+    provisioning_configuration = test_configuration['provisioningConfiguration']
+    registration_id = provisioning_configuration['dpsRegistrationId']
+
     # change attestation
     if(attestation_type):
         # reset the provisioningConfiguration
         test_configuration['provisioningConfiguration'] = {
-            'type': attestation_type
+            'type': attestation_type,
+            'dpsRegistrationId': registration_id
+
         }
         provisioning=True
         if (attestation_type == AttestationType.symmetricKey.value):
@@ -357,6 +362,9 @@ def update(
                 'type': badge_type
             }
         ]
+
+    import six
+    six.print_(test_configuration)
 
     return get_sdk(cmd).update_device_test(
         device_test_id=test_id,
