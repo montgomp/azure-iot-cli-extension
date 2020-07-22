@@ -390,9 +390,6 @@ def update(
             }
         ]
 
-    import six
-    six.print_(test_configuration)
-
     return get_sdk(cmd).update_device_test(
         device_test_id=test_id,
         generate_provisioning_configuration=provisioning,
