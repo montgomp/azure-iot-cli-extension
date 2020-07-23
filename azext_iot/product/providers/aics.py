@@ -14,7 +14,11 @@ from azext_iot.product.shared import (
     AttestationType,
 )
 from msrestazure.azure_exceptions import CloudError
+from azext_iot.common.utility import unpack_msrest_error
+from knack.log import get_logger
 from knack.util import CLIError
+
+logger = get_logger(__name__)
 
 # TODO: Pull argument validation and wait logic from provider into command_{} functions
 class AICSProvider(AICSServiceProvider):
