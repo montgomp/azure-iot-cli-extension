@@ -13,6 +13,6 @@ def list(cmd, test_id):
     return ap.show_test_cases(test_id=test_id)
 
 
-def update(cmd, test_id, configuration_file, badge_type=BadgeType.IotDevice):
+def update(cmd, test_id, configuration_file, badge_type=BadgeType.IotDevice.value):
     ap = AICSProvider(cmd)
     return ap.update_test_cases(test_id=test_id, patch=configuration_file)

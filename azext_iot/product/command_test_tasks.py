@@ -10,7 +10,7 @@ from azext_iot.product.providers.aics import AICSProvider
 from knack.util import CLIError
 
 
-def create(cmd, test_id, task_type=TaskType.QueueTestRun, wait=False, poll_interval=3):
+def create(cmd, test_id, task_type=TaskType.QueueTestRun.value, wait=False, poll_interval=3):
     ap = AICSProvider(cmd)
     return ap.create_test_task(
         test_id=test_id, task_type=task_type, wait=wait, poll_interval=poll_interval

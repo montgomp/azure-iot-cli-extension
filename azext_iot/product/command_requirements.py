@@ -8,6 +8,6 @@ from azext_iot.product.shared import BadgeType
 from azext_iot.product.providers.aics import AICSProvider
 
 
-def list(cmd, badge_type=BadgeType.IotDevice):
+def list(cmd, badge_type=BadgeType.IotDevice.value):
     ap = AICSProvider(cmd)
     return ap.list_requirements(badge_type=badge_type)
