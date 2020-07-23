@@ -4,13 +4,15 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-def show(test_id, run_id=None, latest=False, monitor=False, monitor_interval=3):
-    # if run_id GET /deviceTests/{deviceTestId}testRuns/{testRunId}
-    # else if latest GET /deviceTests/{deviceTestId}/testRuns/latest
-    # else fail
-    return True
+from azext_iot.product.providers.aics import AICSProvider
+
+def show(cmd, test_id, run_id=None, wait=False, poll_interval=3):
+    ap = AICSProvider(cmd)
+    if run_id:
+        return ap.show_test_run(test_id=test_id,run_id=run_id)
+    return ap.show_test_run_latest(test_id=test_id)
 
 
-def create(test_id, run_id):
-    # call to POST /deviceTests/{deviceTestId}/testRuns/{testRunId}/submit
-    return True
+def submit(cmd, test_id, run_id):
+    ap = AICSProvider(cmd)
+    return ap.submit_test_run(test_id=test_id, run_id=run_id)

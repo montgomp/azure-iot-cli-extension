@@ -5,13 +5,14 @@
 # --------------------------------------------------------------------------------------------
 
 from azext_iot.product.shared import BadgeType
+from azext_iot.product.providers.aics import AICSProvider
 
 
-def list(test_id):
-    # call to GET /deviceTests/{deviceTestId}/testCases
-    return True
+def list(cmd, test_id):
+    ap = AICSProvider(cmd)
+    return ap.show_test_cases(test_id=test_id)
 
 
-def update(test_id, configuration_file, badge_type=BadgeType.IotDevice):
-    # call to PATCH /deviceTests/{deviceTestId}/TestCases
-    return True
+def update(cmd, test_id, configuration_file, badge_type=BadgeType.IotDevice):
+    ap = AICSProvider(cmd)
+    return ap.update_test_cases(test_id=test_id, patch=configuration_file)
