@@ -39,31 +39,10 @@ class AICSProvider(AICSServiceProvider):
     def create_test_task(
         self, test_id, task_type=TaskType.QueueTestRun, wait=False, poll_interval=3
     ):
-        final_statuses = [
-            Status.failed.value,
-            Status.completed.value,
-            Status.cancelled.value,
-        ]
-        status = None
         try:
-            response = self.mgmt_sdk.create_device_test_task(
+            return self.mgmt_sdk.create_device_test_task(
                 device_test_id=test_id, task_type=task_type
             )
-            if not response:
-                raise CLIError(
-                    "Failed to create device test task - please ensure a device test exists with Id {}".format(
-                        test_id
-                    )
-                )
-            status = response.status
-            task_id = response.id
-            while all([wait, status, task_id]) and status not in final_statuses:
-                sleep(poll_interval)
-                response = self.mgmt_sdk.get_device_test_task(
-                    task_id=task_id, device_test_id=test_id
-                )
-                status = response.status
-            return response
         except CloudError as e:
             return CLIError(unpack_msrest_error(e))
 
@@ -75,20 +54,17 @@ class AICSProvider(AICSServiceProvider):
         except CloudError as e:
             return CLIError(unpack_msrest_error(e))
 
-    def show_test_task(self, test_id, task_id=None, running=False):
+    def show_test_task(self, test_id, task_id=None):
         try:
-            if task_id:
-                return self.mgmt_sdk.get_device_test_task(
-                    task_id=task_id, device_test_id=test_id
-                )
-            elif running:
-                return self.mgmt_sdk.get_running_device_test_tasks(
-                    device_test_id=test_id
-                )
-            else:
-                raise CLIError(
-                    "Please provide a task-id for individual task details, or use the --running argument to list all running tasks"
-                )
+            return self.mgmt_sdk.get_device_test_task(
+                task_id=task_id, device_test_id=test_id
+            )
+        except CloudError as e:
+            return CLIError(unpack_msrest_error(e))
+
+    def show_running_test_task(self, test_id):
+        try:
+            return self.mgmt_sdk.get_running_device_test_tasks(device_test_id=test_id)
         except CloudError as e:
             return CLIError(unpack_msrest_error(e))
 
