@@ -4,9 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import os
 from time import sleep
 from functools import wraps
-import os
 from azext_iot.product.providers import AICSServiceProvider
 from azext_iot.product.shared import (
     TaskType,
@@ -24,14 +24,14 @@ logger = get_logger(__name__)
 
 def process_cloud_error(func):
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def catch_unpack_clouderror(*args, **kwargs):
         """Process / unpack CloudError exceptions as CLIErrors"""
         try:
             return func(*args, **kwargs)
         except CloudError as e:
             return CLIError(unpack_msrest_error(e))
 
-    return wrapper
+    return catch_unpack_clouderror
 
 
 class AICSProvider(AICSServiceProvider):
@@ -42,7 +42,6 @@ class AICSProvider(AICSServiceProvider):
     # Requirements
     @process_cloud_error
     def list_requirements(self, badge_type=BadgeType.IotDevice):
-        # call to GET /certificationRequirements
         return self.mgmt_sdk.get_device_certification_requirements(
             badge_type=badge_type
         )
@@ -75,12 +74,12 @@ class AICSProvider(AICSServiceProvider):
     # Tests
     @process_cloud_error
     def show_test(self, test_id):
-        # call to GET /deviceTests/{deviceTestId}
-        return self.mgmt_sdk.get_device_test(device_test_id=test_id, raw=True).response.json()
+        return self.mgmt_sdk.get_device_test(
+            device_test_id=test_id, raw=True
+        ).response.json()
 
     @process_cloud_error
     def search_test(self, searchOptions):
-        # call to POST /deviceTests/search
         return self.mgmt_sdk.search_device_test(body=searchOptions)
 
     @process_cloud_error
@@ -91,7 +90,7 @@ class AICSProvider(AICSServiceProvider):
             device_test_id=test_id,
             generate_provisioning_configuration=False,
             body=test_configuration,
-            raw=True
+            raw=True,
         ).response.json()
 
     @process_cloud_error

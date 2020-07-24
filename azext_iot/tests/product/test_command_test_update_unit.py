@@ -86,7 +86,7 @@ class TestTestUpdateUnit(unittest.TestCase):
             device_test_id=self.test_id,
             generate_provisioning_configuration=False,
             body=mock_file_data,
-            raw=True
+            raw=True,
         )
 
     @mock.patch("azext_iot.product.command_tests._read_certificate_from_file")

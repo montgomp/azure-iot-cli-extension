@@ -164,7 +164,9 @@ def create(
     )
 
     ap = AICSProvider(cmd)
-    return ap.create_test(test_configuration=test_configuration, provisioning=provisioning)
+    return ap.create_test(
+        test_configuration=test_configuration, provisioning=provisioning
+    )
 
 
 def show(cmd, test_id):
@@ -205,16 +207,13 @@ def update(
     ap = AICSProvider(cmd)
     if configuration_file:
         test_configuration = _create_from_file(configuration_file)
-        return ap.update_test(
-            test_id=test_id,
-            test_configuration=test_configuration,
-        )
+        return ap.update_test(test_id=test_id, test_configuration=test_configuration,)
 
     if not any([attestation_type, badge_type, models]):
         raise CLIError(
             "Configuration file, attestation information, or device configuration must be specified"
         )
-   
+
     test_configuration = ap.show_test(test_id=test_id)
 
     provisioning_configuration = test_configuration["provisioningConfiguration"]

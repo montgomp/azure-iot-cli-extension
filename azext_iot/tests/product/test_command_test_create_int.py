@@ -10,9 +10,7 @@ from uuid import uuid4
 
 
 class TestTestCreateInt(LiveScenarioTest):
-    def __init__(
-        self, test_case
-    ):
+    def __init__(self, test_case):
         self.product_id = str(uuid4())
         super(TestTestCreateInt, self).__init__(test_case)
 
@@ -23,19 +21,22 @@ class TestTestCreateInt(LiveScenarioTest):
 
         # call the POST /deviceTest
         output = self.cmd(
-            'iot product test create -p {} --dt {} --at {} --bt {}'.format(
-                self.product_id,
-                device_type,
-                attestation_type,
-                badge_type
+            "iot product test create -p {} --dt {} --at {} --bt {}".format(
+                self.product_id, device_type, attestation_type, badge_type
             )
         ).get_output_in_json()
 
         import six
+
         six.print_(output)
 
-        assert output['productId'] == self.product_id
-        assert output['deviceType'].lower() == device_type.lower()
-        assert output['provisioningConfiguration']['type'].lower() == attestation_type.lower()
+        assert output["productId"] == self.product_id
+        assert output["deviceType"].lower() == device_type.lower()
+        assert (
+            output["provisioningConfiguration"]["type"].lower()
+            == attestation_type.lower()
+        )
         # assert service created symmetric key info
-        assert output['provisioningConfiguration']['symmetricKeyEnrollmentInformation']['primaryKey']
+        assert output["provisioningConfiguration"]["symmetricKeyEnrollmentInformation"][
+            "primaryKey"
+        ]

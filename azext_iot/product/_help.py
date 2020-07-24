@@ -11,16 +11,22 @@ from knack.help_files import helps
 
 
 def load_help():
-    helps["iot product"] = """
+    helps[
+        "iot product"
+    ] = """
         type: group
         short-summary: Manage device testing for product certification
     """
-# certification requirements
-    helps["iot product requirement"] = """
+    # certification requirements
+    helps[
+        "iot product requirement"
+    ] = """
         type: group
         short-summary: Manage product certification requirements
     """
-    helps["iot product requirement list"] = """
+    helps[
+        "iot product requirement list"
+    ] = """
         type: command
         short-summary: Get certification requirements
         long-summary: |
@@ -30,12 +36,16 @@ def load_help():
           text: >
             az iot product requirement list
     """
-# product tests
-    helps["iot product test"] = """
+    # product tests
+    helps[
+        "iot product test"
+    ] = """
         type: group
         short-summary: Manage device tests for product certification
     """
-    helps["iot product test create"] = """
+    helps[
+        "iot product test create"
+    ] = """
         type: command
         short-summary: Create a new product test for product certification
         examples:
@@ -46,7 +56,9 @@ def load_help():
           text: >
             az iot product test create --configuration-file {configuration_file} --provisioning
     """
-    helps["iot product test init"] = """
+    helps[
+        "iot product test init"
+    ] = """
         type: command
         short-summary: Used to initialize local workspace for a new product certification
         examples:
@@ -57,7 +69,9 @@ def load_help():
           text: >
             az iot product test init --product-name {product_name} --working-folder {working_folder}
     """
-    helps["iot product test search"] = """
+    helps[
+        "iot product test search"
+    ] = """
         type: command
         short-summary: Search product repository for testing data
         examples:
@@ -74,7 +88,9 @@ def load_help():
           text: >
             az iot product test search --product-id {product_id} --certificate-name {certificate_name}
     """
-    helps["iot product test show"] = """
+    helps[
+        "iot product test show"
+    ] = """
         type: command
         short-summary: View product test data
         examples:
@@ -82,7 +98,9 @@ def load_help():
           text: >
             az iot product test show --test-id {test_id}
     """
-    helps["iot product test update"] = """
+    helps[
+        "iot product test update"
+    ] = """
         type: command
         short-summary: Update the product certification test data
         examples:
@@ -90,12 +108,16 @@ def load_help():
           text: >
             az iot product test update --test-id {test_id} --configuration-file {configuration_file}
     """
-# Product Test Tasks
-    helps["iot product test task"] = """
+    # Product Test Tasks
+    helps[
+        "iot product test task"
+    ] = """
         type: group
         short-summary: Manage product testing certification tasks
     """
-    helps["iot product test task create"] = """
+    helps[
+        "iot product test task create"
+    ] = """
         type: command
         short-summary: Queue a new testing task. Only one testing task can be running at a time
         examples:
@@ -109,7 +131,9 @@ def load_help():
           text: >
             az iot product test task create --test-id {test_id} --wait --poll-interval 5
     """
-    helps["iot product test task delete"] = """
+    helps[
+        "iot product test task delete"
+    ] = """
         type: command
         short-summary: Cancel a running task matching the specified --task-id
         examples:
@@ -117,7 +141,9 @@ def load_help():
           text: >
             az iot product test task delete --test-id {test_id} --task-id {task_id}
     """
-    helps["iot product test task show"] = """
+    helps[
+        "iot product test task show"
+    ] = """
         type: command
         short-summary: Show the status of a testing task. Use --running for current running task or --task-id
         examples:
@@ -128,12 +154,16 @@ def load_help():
           text: >
             az iot product test task show --test-id {test_id} --running
     """
-# Test Cases
-    helps["iot product test case"] = """
+    # Test Cases
+    helps[
+        "iot product test case"
+    ] = """
         type: group
         short-summary: Manage product testing certification test cases
     """
-    helps["iot product test case update"] = """
+    helps[
+        "iot product test case update"
+    ] = """
         type: command
         short-summary: Update the product certification test case data
         examples:
@@ -141,7 +171,9 @@ def load_help():
           text: >
             az iot product test case update --test-id {test_id} --configuration-file {configuration_file}
     """
-    helps["iot product test case list"] = """
+    helps[
+        "iot product test case list"
+    ] = """
         type: command
         short-summary: List the test cases of a product certification test
         examples:
@@ -149,12 +181,16 @@ def load_help():
           text: >
             az iot product test case list --test-id {test_id}
     """
-# Test Runs
-    helps["iot product test run"] = """
+    # Test Runs
+    helps[
+        "iot product test run"
+    ] = """
         type: group
         short-summary: Manage product testing certification test runs
     """
-    helps["iot product test run submit"] = """
+    helps[
+        "iot product test run submit"
+    ] = """
         type: command
         short-summary: Submit a completed test run to the partner/product service
         examples:
@@ -162,7 +198,9 @@ def load_help():
           text: >
             az iot product test run submit --test-id {test_id}
     """
-    helps["iot product test run show"] = """
+    helps[
+        "iot product test run show"
+    ] = """
         type: command
         short-summary: Show the status of a testing run. Use --latest for most recently queued test run
         examples:

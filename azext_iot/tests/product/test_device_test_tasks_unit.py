@@ -278,10 +278,7 @@ class TestTasksSDK(object):
         result = show(fixture_cmd, test_id=device_test_id, running=True)
         req = service_client_get_running.calls[0].request
         url = req.url
-        assert (
-            "deviceTests/{}/tasks/running".format(device_test_id)
-            in url
-        )
+        assert "deviceTests/{}/tasks/running".format(device_test_id) in url
         assert req.method == "GET"
         assert result[0].id == device_test_task_id
         assert result[0].device_test_id == device_test_id
