@@ -49,7 +49,7 @@ class TestTaskCreate(unittest.TestCase):
     def test_task_create(self, mock_create):
         create(self, test_id=device_test_id)
         mock_create.assert_called_with(
-            device_test_id=device_test_id, task_type=TaskType.QueueTestRun
+            device_test_id=device_test_id, task_type=TaskType.QueueTestRun.value
         )
 
     @mock.patch(
@@ -66,7 +66,7 @@ class TestTaskCreate(unittest.TestCase):
 
         # one call to create
         mock_create.assert_called_with(
-            device_test_id=device_test_id, task_type=TaskType.QueueTestRun
+            device_test_id=device_test_id, task_type=TaskType.QueueTestRun.value
         )
         assert mock_create.call_count == 1
 
@@ -92,7 +92,7 @@ class TestTaskCreate(unittest.TestCase):
 
         # one call to create
         mock_create.assert_called_with(
-            device_test_id=device_test_id, task_type=TaskType.QueueTestRun
+            device_test_id=device_test_id, task_type=TaskType.QueueTestRun.value
         )
         assert mock_create.call_count == 1
 

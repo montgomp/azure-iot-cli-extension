@@ -7,13 +7,13 @@
 from azure.cli.testsdk import LiveScenarioTest
 
 
-class TestTestCreateInt(LiveScenarioTest):
+class TestTestShowInt(LiveScenarioTest):
     def __init__(
         self, test_case
     ):
-        self.test_id = 'daa7a1c2-f543-4c00-8046-69d410ed8541'
-        self.product_id = 'b70a3805-5800-4272-93f2-1b4d0150f683'
-        super(TestTestCreateInt, self).__init__(test_case)
+        self.test_id = '9825514b-27e6-4563-8cd9-2b384f3ac10d'
+        self.product_id = 'test-product'
+        super(TestTestShowInt, self).__init__(test_case)
 
     def test_show_test(self):
         # call the GET /deviceTest/{test_id}

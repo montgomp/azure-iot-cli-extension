@@ -6,7 +6,8 @@
 
 from uuid import uuid4
 from azext_iot.product.providers.aics import AICSProvider
-from azext_iot.product.shared import BadgeType
+from azext_iot.sdk.product.models import DeviceTestSearchOptions
+from azext_iot.product.shared import BadgeType, AttestationType
 from knack.log import get_logger
 from knack.util import CLIError
 import os
@@ -120,19 +121,50 @@ def create(
     models=None,
     provisioning=True,
 ):
-    ap = AICSProvider(cmd)
-    return ap.create_test(
-        configuration_file=configuration_file,
-        product_id=product_id,
-        device_type=device_type,
-        attestation_type=attestation_type,
-        certificate_path=certificate_path,
-        connection_string=connection_string,
-        endorsement_key=endorsement_key,
-        badge_type=badge_type,
-        models=models,
-        provisioning=provisioning,
+    if attestation_type == AttestationType.x509.value and not certificate_path:
+        raise CLIError("If attestation type is x509, certificate path is required")
+    if attestation_type == AttestationType.tpm.value and not endorsement_key:
+        raise CLIError("If attestation type is tpm, endorsement key is required")
+    if badge_type == BadgeType.Pnp.value and not models:
+        raise CLIError("If badge type is Pnp, models is required")
+    if badge_type == BadgeType.IotEdgeCompatible.value and not all(
+        [connection_string, attestation_type == AttestationType.connectionString.value,]
+    ):
+        raise CLIError(
+            "Connection string is required for Edge Compatible modules testing"
+        )
+    if badge_type != BadgeType.IotEdgeCompatible.value and (
+        connection_string or attestation_type == AttestationType.connectionString.value
+    ):
+        raise CLIError(
+            "Connection string is only available for Edge Compatible modules testing"
+        )
+    if not any(
+        [
+            configuration_file,
+            all([device_type, product_id, attestation_type, badge_type]),
+        ]
+    ):
+        raise CLIError(
+            "If configuration file is not specified, attestation and device definition parameters must be specified"
+        )
+    test_configuration = (
+        _create_from_file(configuration_file)
+        if configuration_file
+        else _build_test_configuration(
+            product_id=product_id,
+            device_type=device_type,
+            attestation_type=attestation_type,
+            certificate_path=certificate_path,
+            endorsement_key=endorsement_key,
+            badge_type=badge_type,
+            connection_string=connection_string,
+            models=models,
+        )
     )
+
+    ap = AICSProvider(cmd)
+    return ap.create_test(test_configuration=test_configuration, provisioning=provisioning)
 
 
 def show(cmd, test_id):
@@ -151,23 +183,182 @@ def update(
     badge_type=None,
     models=None,
 ):
+    # verify required parameters for various options
+    if attestation_type == AttestationType.x509.value and not certificate_path:
+        raise CLIError("If attestation type is x509, certificate path is required")
+    if attestation_type == AttestationType.tpm.value and not endorsement_key:
+        raise CLIError("If attestation type is tpm, endorsement key is required")
+    if badge_type == BadgeType.Pnp.value and not models:
+        raise CLIError("If badge type is Pnp, models is required")
+    if badge_type == BadgeType.IotEdgeCompatible.value and not all(
+        [connection_string, attestation_type == AttestationType.connectionString.value,]
+    ):
+        raise CLIError(
+            "Connection string is required for Edge Compatible modules testing"
+        )
+    if badge_type != BadgeType.IotEdgeCompatible.value and (
+        connection_string or attestation_type == AttestationType.connectionString.value
+    ):
+        raise CLIError(
+            "Connection string is only available for Edge Compatible modules testing"
+        )
     ap = AICSProvider(cmd)
-    return ap.update_test(
-        test_id=test_id,
-        configuration_file=configuration_file,
-        attestation_type=attestation_type,
-        certificate_path=certificate_path,
-        connection_string=connection_string,
-        endorsement_key=endorsement_key,
-        badge_type=badge_type,
-        models=models,
-    )
+    if configuration_file:
+        test_configuration = _create_from_file(configuration_file)
+        return ap.update_test(
+            test_id=test_id,
+            test_configuration=test_configuration,
+        )
+
+    if not any([attestation_type, badge_type, models]):
+        raise CLIError(
+            "Configuration file, attestation information, or device configuration must be specified"
+        )
+   
+    test_configuration = ap.show_test(test_id=test_id)
+
+    provisioning_configuration = test_configuration["provisioningConfiguration"]
+    registration_id = provisioning_configuration["dpsRegistrationId"]
+
+    # change attestation
+    if attestation_type:
+        # reset the provisioningConfiguration
+        test_configuration["provisioningConfiguration"] = {
+            "type": attestation_type,
+            "dpsRegistrationId": registration_id,
+        }
+        provisioning = True
+        if attestation_type == AttestationType.symmetricKey.value:
+            test_configuration["provisioningConfiguration"][
+                "symmetricKeyEnrollmentInformation"
+            ] = {}
+        elif attestation_type == AttestationType.tpm.value:
+            test_configuration["provisioningConfiguration"][
+                "tpmEnrollmentInformation"
+            ] = {"endorsementKey": endorsement_key}
+        elif attestation_type == AttestationType.x509.value:
+            test_configuration["provisioningConfiguration"][
+                "x509EnrollmentInformation"
+            ] = {
+                "base64EncodedX509Certificate": _read_certificate_from_file(
+                    certificate_path
+                )
+            }
+        elif attestation_type == AttestationType.connectionString.value:
+            test_configuration["provisioningConfiguration"][
+                "deviceConnectionString"
+            ] = connection_string
+
+    # reset PnP models
+    badge_config = test_configuration["certificationBadgeConfigurations"]
+
+    if (
+        badge_type == BadgeType.Pnp.value
+        or badge_config[0]["type"].lower() == BadgeType.Pnp.value.lower()
+    ) and models:
+        models_array = _process_models_directory(models)
+        test_configuration["certificationBadgeConfigurations"] = [
+            {"type": BadgeType.Pnp.value, "digitalTwinModelDefinitions": models_array,}
+        ]
+    elif badge_type:
+        test_configuration["certificationBadgeConfigurations"] = [{"type": badge_type}]
+
+    return ap.update_test(test_id=test_id, test_configuration=test_configuration)
 
 
 def search(cmd, product_id=None, registration_id=None, certificate_name=None):
+    if not any([product_id or registration_id or certificate_name]):
+        raise CLIError("At least one search criteria must be specified")
+
     ap = AICSProvider(cmd)
-    return ap.search_test(
+    searchOptions = DeviceTestSearchOptions(
         product_id=product_id,
-        registration_id=registration_id,
-        certificate_name=certificate_name,
+        dps_registration_id=registration_id,
+        dps_x509_certificate_common_name=certificate_name,
     )
+    return ap.search_test(searchOptions)
+
+
+def _build_test_configuration(
+    product_id,
+    device_type,
+    attestation_type,
+    certificate_path,
+    endorsement_key,
+    connection_string,
+    badge_type,
+    models,
+):
+    config = {
+        "validationType": "Certification",
+        "productId": product_id,
+        "deviceType": device_type,
+        "provisioningConfiguration": {"type": attestation_type},
+        "certificationBadgeConfigurations": [{"type": badge_type}],
+    }
+    if attestation_type == AttestationType.symmetricKey.value:
+        config["provisioningConfiguration"]["symmetricKeyEnrollmentInformation"] = {}
+    elif attestation_type == AttestationType.tpm.value:
+        config["provisioningConfiguration"]["tpmEnrollmentInformation"] = {
+            "endorsementKey": endorsement_key
+        }
+    elif attestation_type == AttestationType.x509.value:
+        config["provisioningConfiguration"]["x509EnrollmentInformation"] = {
+            "base64EncodedX509Certificate": _read_certificate_from_file(
+                certificate_path
+            )
+        }
+    elif attestation_type == AttestationType.connectionString.value:
+        config["provisioningConfiguration"][
+            "deviceConnectionString"
+        ] = connection_string
+
+    if badge_type == BadgeType.Pnp.value and models:
+        models_array = _process_models_directory(models)
+        config["certificationBadgeConfigurations"][0][
+            "digitalTwinModelDefinitions"
+        ] = models_array
+
+    return config
+
+
+def _process_models_directory(from_directory):
+    from azext_iot.common.utility import scantree, process_json_arg
+
+    models = []
+    for entry in scantree(from_directory):
+        if not any([entry.name.endswith(".json"), entry.name.endswith(".dtdl")]):
+            logger.debug(
+                "Skipping {} - model file must end with .json or .dtdl".format(
+                    entry.path
+                )
+            )
+            continue
+        entry_json = process_json_arg(content=entry.path, argument_name=entry.name)
+        # we need to double-encode the JSON string
+        from json import dumps
+
+        models.append(dumps(entry_json))
+    return models
+
+
+def _read_certificate_from_file(certificate_path):
+    with open(file=certificate_path, mode="rb") as f:
+        data = f.read()
+
+        from base64 import encodestring
+
+        return encodestring(data)
+
+
+def _create_from_file(configuration_file):
+    if not (os.path.exists(configuration_file)):
+        raise CLIError("Specified configuration file does not exist")
+
+    # read the json file and POST /deviceTests
+    with open(file=configuration_file, encoding="utf-8") as f:
+        file_contents = f.read()
+
+        from json import loads
+
+        return loads(file_contents)

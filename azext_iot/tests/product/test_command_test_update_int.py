@@ -8,12 +8,12 @@ from azure.cli.testsdk import LiveScenarioTest
 from azext_iot.product.shared import AttestationType
 
 
-class TestTestCreateInt(LiveScenarioTest):
+class TestTestUpdateInt(LiveScenarioTest):
     def __init__(
         self, test_case
     ):
-        self.test_id = '61c5939c-bf0e-4116-b62c-fe43ea7f8dd5'
-        super(TestTestCreateInt, self).__init__(test_case)
+        self.test_id = '9825514b-27e6-4563-8cd9-2b384f3ac10d'
+        super(TestTestUpdateInt, self).__init__(test_case)
 
     def test_update_symmetric_key(self):
         # call the GET /deviceTest/{test_id}

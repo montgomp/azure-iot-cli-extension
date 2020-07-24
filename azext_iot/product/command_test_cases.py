@@ -19,6 +19,4 @@ def update(cmd, test_id, configuration_file):
     import os
     if not os.path.exists(configuration_file):
         raise CLIError("Specified configuration file does not exist")
-
-
     return ap.update_test_cases(test_id=test_id, patch=process_json_arg(configuration_file, 'configuration_file'))
