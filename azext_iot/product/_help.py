@@ -154,13 +154,13 @@ def load_help():
         type: group
         short-summary: Manage product testing certification test runs
     """
-    helps["iot product test run create"] = """
+    helps["iot product test run submit"] = """
         type: command
         short-summary: Submit a completed test run to the partner/product service
         examples:
         - name: Basic usage
           text: >
-            az iot product test run create --test-id {test_id}
+            az iot product test run submit --test-id {test_id}
     """
     helps["iot product test run show"] = """
         type: command
