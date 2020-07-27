@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azext_iot.product.shared import BadgeType
 from azext_iot.product.providers.aics import AICSProvider
 from azext_iot.common.utility import process_json_arg
 from knack.util import CLIError
