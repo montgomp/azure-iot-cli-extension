@@ -7,6 +7,7 @@
 from azure.cli.testsdk import LiveScenarioTest
 from azext_iot.product.shared import BadgeType
 
+
 class TestTestShowInt(LiveScenarioTest):
     def __init__(self, test_case):
         self.test_id = "524ac74f-752b-4748-9667-45cd09e8a098"

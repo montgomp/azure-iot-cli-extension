@@ -386,7 +386,7 @@ class TestTestUpdateUnit(unittest.TestCase):
             raw=True,
             body={
                 "certificationBadgeConfigurations": [
-                    {"type": BadgeType.IotDevice.value,}
+                    {"type": BadgeType.IotDevice.value, }
                 ],
                 "deviceType": "DevKit",
                 "id": self.test_id,

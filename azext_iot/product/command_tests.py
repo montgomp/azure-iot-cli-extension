@@ -128,7 +128,7 @@ def create(
     if badge_type == BadgeType.Pnp.value and not models:
         raise CLIError("If badge type is Pnp, models is required")
     if badge_type == BadgeType.IotEdgeCompatible.value and not all(
-        [connection_string, attestation_type == AttestationType.connectionString.value,]
+        [connection_string, attestation_type == AttestationType.connectionString.value, ]
     ):
         raise CLIError(
             "Connection string is required for Edge Compatible modules testing"
@@ -194,7 +194,7 @@ def update(
     if badge_type == BadgeType.Pnp.value and not models:
         raise CLIError("If badge type is Pnp, models is required")
     if badge_type == BadgeType.IotEdgeCompatible.value and not all(
-        [connection_string, attestation_type == AttestationType.connectionString.value,]
+        [connection_string, attestation_type == AttestationType.connectionString.value, ]
     ):
         raise CLIError(
             "Connection string is required for Edge Compatible modules testing"
@@ -258,7 +258,7 @@ def update(
     ) and models:
         models_array = _process_models_directory(models)
         test_configuration["certificationBadgeConfigurations"] = [
-            {"type": BadgeType.Pnp.value, "digitalTwinModelDefinitions": models_array,}
+            {"type": BadgeType.Pnp.value, "digitalTwinModelDefinitions": models_array, }
         ]
     elif badge_type:
         test_configuration["certificationBadgeConfigurations"] = [{"type": badge_type}]

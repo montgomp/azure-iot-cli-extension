@@ -4,15 +4,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import os
-from time import sleep
 from functools import wraps
 from azext_iot.product.providers import AICSServiceProvider
 from azext_iot.product.shared import (
     TaskType,
-    DeviceTestTaskStatus as Status,
     BadgeType,
-    AttestationType,
 )
 from msrestazure.azure_exceptions import CloudError
 from azext_iot.common.utility import unpack_msrest_error
