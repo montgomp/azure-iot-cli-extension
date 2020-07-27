@@ -8,7 +8,6 @@ from msrest.authentication import Authentication
 
 
 class AICSAuthentication(Authentication):
-
     def __init__(self, cmd, base_url):
         self.cmd = cmd
         self.base_url = base_url
@@ -53,6 +52,6 @@ class AICSAuthentication(Authentication):
             "accessToken": creds[1],
             "expiresOn": creds[2].get("expiresOn", "N/A"),
             "tenant": tenant,
-            "subscription": subscription
+            "subscription": subscription,
         }
         return "{} {}".format(parsed_token["tokenType"], parsed_token["accessToken"])

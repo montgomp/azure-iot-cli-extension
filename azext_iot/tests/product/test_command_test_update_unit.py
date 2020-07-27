@@ -13,7 +13,7 @@ from azext_iot.product.shared import BadgeType, AttestationType
 
 class TestTestUpdateUnit(unittest.TestCase):
     def __init__(self, test_case):
-        self.test_id = "61c5939c-bf0e-4116-b62c-fe43ea7f8dd5"
+        self.test_id = "3beb0e67-33d0-4896-b69b-91c7b7ce8fab"
         super(TestTestUpdateUnit, self).__init__(test_case)
 
     def test_update_with_x509_and_no_certificate_fails(self):
@@ -76,7 +76,7 @@ class TestTestUpdateUnit(unittest.TestCase):
         )
 
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.update_device_test")
-    @mock.patch("azext_iot.product.providers.aics._create_from_file")
+    @mock.patch("azext_iot.product.command_tests._create_from_file")
     def test_update_from_file(self, mock_from_file, mock_sdk_update):
         mock_file_data = {"mock": "data"}
         mock_from_file.return_value = mock_file_data
@@ -86,9 +86,10 @@ class TestTestUpdateUnit(unittest.TestCase):
             device_test_id=self.test_id,
             generate_provisioning_configuration=False,
             body=mock_file_data,
+            raw=True,
         )
 
-    @mock.patch("azext_iot.product.providers.aics._read_certificate_from_file")
+    @mock.patch("azext_iot.product.command_tests._read_certificate_from_file")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.update_device_test")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.get_device_test")
     def test_update_symmetric_key_to_cert(
@@ -255,7 +256,7 @@ class TestTestUpdateUnit(unittest.TestCase):
             },
         )
 
-    @mock.patch("azext_iot.product.providers.aics._process_models_directory")
+    @mock.patch("azext_iot.product.command_tests._process_models_directory")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.update_device_test")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.get_device_test")
     def test_update_iotdevice_to_pnp(
@@ -336,7 +337,7 @@ class TestTestUpdateUnit(unittest.TestCase):
             },
         )
 
-    @mock.patch("azext_iot.product.providers.aics._process_models_directory")
+    @mock.patch("azext_iot.product.command_tests._process_models_directory")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.update_device_test")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.get_device_test")
     def test_update_pnp_to_iotdevice(

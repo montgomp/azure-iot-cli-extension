@@ -10,11 +10,31 @@ from azext_iot.product.providers.aics import AICSProvider
 from knack.util import CLIError
 
 
-def create(cmd, test_id, task_type=TaskType.QueueTestRun.value, wait=False, poll_interval=3):
+def create(
+    cmd, test_id, task_type=TaskType.QueueTestRun.value, wait=False, poll_interval=3
+):
     ap = AICSProvider(cmd)
-    return ap.create_test_task(
+    final_statuses = [
+        Status.failed.value,
+        Status.completed.value,
+        Status.cancelled.value,
+    ]
+    response = ap.create_test_task(
         test_id=test_id, task_type=task_type, wait=wait, poll_interval=poll_interval
     )
+    if not response:
+        raise CLIError(
+            "Failed to create device test task - please ensure a device test exists with Id {}".format(
+                test_id
+            )
+        )
+    status = response.status
+    task_id = response.id
+    while all([wait, status, task_id]) and status not in final_statuses:
+        sleep(poll_interval)
+        response = ap.show_test_task(test_id=test_id, task_id=task_id)
+        status = response.status
+    return response
 
 
 def delete(cmd, test_id, task_id):
@@ -24,4 +44,10 @@ def delete(cmd, test_id, task_id):
 
 def show(cmd, test_id, task_id=None, running=False):
     ap = AICSProvider(cmd)
-    return ap.show_test_task(test_id=test_id, task_id=task_id, running=running)
+    if task_id:
+        return ap.show_test_task(test_id=test_id, task_id=task_id)
+    elif running:
+        return ap.show_running_test_task(test_id=test_id)
+    raise CLIError(
+        "Please provide a task-id for individual task details, or use the --running argument to list all running tasks"
+    )

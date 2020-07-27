@@ -19,10 +19,10 @@ class BadgeType(Enum):
 
 
 class AttestationType(Enum):
-    symmetricKey = "symmetricKey"
-    tpm = "tpm"
-    x509 = "x509"
-    connectionString = "connectionString"
+    symmetricKey = "SymmetricKey"
+    tpm = "TPM"
+    x509 = "X509"
+    connectionString = "ConnectionString"
 
 
 class DeviceType(Enum):

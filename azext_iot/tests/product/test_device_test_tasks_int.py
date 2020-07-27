@@ -11,9 +11,7 @@ from azure.cli.testsdk import LiveScenarioTest
 class TestProductDeviceTestTasks(LiveScenarioTest):
     def __init__(self, _):
         super(TestProductDeviceTestTasks, self).__init__(_)
-        self.kwargs.update(
-            {"device_test_id": "4afc5755-3167-4c72-84f5-14b136e376e0"}
-        )
+        self.kwargs.update({"device_test_id": "3beb0e67-33d0-4896-b69b-91c7b7ce8fab"})
 
     def setup(self):
         return True
