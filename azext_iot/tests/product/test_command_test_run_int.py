@@ -9,9 +9,9 @@ from azure.cli.testsdk import LiveScenarioTest
 from azext_iot.product.shared import TaskType
 
 
-class TestProductDeviceTestTasks(LiveScenarioTest):
+class TestProductDeviceTestRuns(LiveScenarioTest):
     def __init__(self, _):
-        super(TestProductDeviceTestTasks, self).__init__(_)
+        super(TestProductDeviceTestRuns, self).__init__(_)
         self.kwargs.update(
             {
                 "device_test_id": "3beb0e67-33d0-4896-b69b-91c7b7ce8fab",
