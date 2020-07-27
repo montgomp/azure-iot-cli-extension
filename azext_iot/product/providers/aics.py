@@ -84,11 +84,11 @@ class AICSProvider(AICSServiceProvider):
 
     @process_cloud_error
     def update_test(
-        self, test_id, test_configuration,
+        self, test_id, test_configuration, provisioning=False
     ):
         return self.mgmt_sdk.update_device_test(
             device_test_id=test_id,
-            generate_provisioning_configuration=False,
+            generate_provisioning_configuration=provisioning,
             body=test_configuration,
             raw=True,
         ).response.json()

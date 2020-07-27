@@ -13,7 +13,7 @@ from azext_iot.product.shared import BadgeType, AttestationType
 
 class TestTestUpdateUnit(unittest.TestCase):
     def __init__(self, test_case):
-        self.test_id = "9825514b-27e6-4563-8cd9-2b384f3ac10d"
+        self.test_id = "3beb0e67-33d0-4896-b69b-91c7b7ce8fab"
         super(TestTestUpdateUnit, self).__init__(test_case)
 
     def test_update_with_x509_and_no_certificate_fails(self):
@@ -131,7 +131,7 @@ class TestTestUpdateUnit(unittest.TestCase):
         mock_read_certificate.assert_called_with("mycertificate.cer")
         mock_sdk_update.assert_called_with(
             device_test_id=self.test_id,
-            generate_provisioning_configuration=False,
+            generate_provisioning_configuration=True,
             raw=True,
             body={
                 "certificationBadgeConfigurations": [{"type": "IotDevice"}],
@@ -186,7 +186,7 @@ class TestTestUpdateUnit(unittest.TestCase):
         )
         mock_sdk_update.assert_called_with(
             device_test_id=self.test_id,
-            generate_provisioning_configuration=False,
+            generate_provisioning_configuration=True,
             raw=True,
             body={
                 "certificationBadgeConfigurations": [{"type": "IotDevice"}],
@@ -240,7 +240,7 @@ class TestTestUpdateUnit(unittest.TestCase):
         )
         mock_sdk_update.assert_called_with(
             device_test_id=self.test_id,
-            generate_provisioning_configuration=False,
+            generate_provisioning_configuration=True,
             raw=True,
             body={
                 "certificationBadgeConfigurations": [{"type": "IotDevice"}],

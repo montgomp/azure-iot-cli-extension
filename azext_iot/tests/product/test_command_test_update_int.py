@@ -10,7 +10,7 @@ from azext_iot.product.shared import AttestationType
 
 class TestTestUpdateInt(LiveScenarioTest):
     def __init__(self, test_case):
-        self.test_id = "9825514b-27e6-4563-8cd9-2b384f3ac10d"
+        self.test_id = "3beb0e67-33d0-4896-b69b-91c7b7ce8fab"
         super(TestTestUpdateInt, self).__init__(test_case)
 
     def test_update_symmetric_key(self):
@@ -21,6 +21,6 @@ class TestTestUpdateInt(LiveScenarioTest):
 
         assert output["id"] == self.test_id
         assert (
-            output["provisioningConfiguration"]["type"] == AttestationType.symmetricKey
+            output["provisioningConfiguration"]["type"] == AttestationType.symmetricKey.value
         )
         assert output["provisioningConfiguration"]["symmetricKeyEnrollmentInformation"]

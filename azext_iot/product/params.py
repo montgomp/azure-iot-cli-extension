@@ -72,7 +72,7 @@ def load_product_params(self, _):
             "endorsement_key",
             options_list=["--endorsement-key", "--ek"],
             help="TPM endorsement key for a TPM device. "
-            "When choosing tpm as attestation type, endorsement key is required",
+            "When choosing TPM as attestation type, endorsement key is required",
             arg_group="IoT Device Certification Attestation",
         )
         c.argument(

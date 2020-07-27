@@ -124,7 +124,7 @@ def create(
     if attestation_type == AttestationType.x509.value and not certificate_path:
         raise CLIError("If attestation type is x509, certificate path is required")
     if attestation_type == AttestationType.tpm.value and not endorsement_key:
-        raise CLIError("If attestation type is tpm, endorsement key is required")
+        raise CLIError("If attestation type is TPM, endorsement key is required")
     if badge_type == BadgeType.Pnp.value and not models:
         raise CLIError("If badge type is Pnp, models is required")
     if badge_type == BadgeType.IotEdgeCompatible.value and not all(
@@ -185,6 +185,7 @@ def update(
     badge_type=None,
     models=None,
 ):
+    provisioning = False
     # verify required parameters for various options
     if attestation_type == AttestationType.x509.value and not certificate_path:
         raise CLIError("If attestation type is x509, certificate path is required")
@@ -207,7 +208,7 @@ def update(
     ap = AICSProvider(cmd)
     if configuration_file:
         test_configuration = _create_from_file(configuration_file)
-        return ap.update_test(test_id=test_id, test_configuration=test_configuration,)
+        return ap.update_test(test_id=test_id, test_configuration=test_configuration, provisioning=provisioning)
 
     if not any([attestation_type, badge_type, models]):
         raise CLIError(
@@ -262,7 +263,7 @@ def update(
     elif badge_type:
         test_configuration["certificationBadgeConfigurations"] = [{"type": badge_type}]
 
-    return ap.update_test(test_id=test_id, test_configuration=test_configuration)
+    return ap.update_test(test_id=test_id, test_configuration=test_configuration, provisioning=provisioning)
 
 
 def search(cmd, product_id=None, registration_id=None, certificate_name=None):

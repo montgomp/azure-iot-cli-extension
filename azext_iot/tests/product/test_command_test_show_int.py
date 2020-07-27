@@ -9,7 +9,7 @@ from azure.cli.testsdk import LiveScenarioTest
 
 class TestTestShowInt(LiveScenarioTest):
     def __init__(self, test_case):
-        self.test_id = "9825514b-27e6-4563-8cd9-2b384f3ac10d"
+        self.test_id = "3beb0e67-33d0-4896-b69b-91c7b7ce8fab"
         self.product_id = "test-product"
         super(TestTestShowInt, self).__init__(test_case)
 

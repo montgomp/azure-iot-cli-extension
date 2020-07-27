@@ -34,7 +34,7 @@ class TestTestCreateUnit(unittest.TestCase):
             create(self, attestation_type=AttestationType.tpm.value)
 
         self.assertEqual(
-            "If attestation type is tpm, endorsement key is required",
+            "If attestation type is TPM, endorsement key is required",
             str(context.exception),
         )
 
@@ -133,7 +133,7 @@ class TestTestCreateUnit(unittest.TestCase):
                 "productId": self.product_id,
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
-                    "type": "symmetricKey",
+                    "type": "SymmetricKey",
                     "symmetricKeyEnrollmentInformation": {},
                 },
                 "certificationBadgeConfigurations": [{"type": "IotDevice"}],
@@ -167,7 +167,7 @@ class TestTestCreateUnit(unittest.TestCase):
                 "productId": self.product_id,
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
-                    "type": "symmetricKey",
+                    "type": "SymmetricKey",
                     "symmetricKeyEnrollmentInformation": {},
                 },
                 "certificationBadgeConfigurations": [
@@ -214,7 +214,7 @@ class TestTestCreateUnit(unittest.TestCase):
                 "productId": self.product_id,
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
-                    "type": "x509",
+                    "type": "X509",
                     "x509EnrollmentInformation": {
                         "base64EncodedX509Certificate": "MockBase64String"
                     },
@@ -263,7 +263,7 @@ class TestTestCreateUnit(unittest.TestCase):
                 "productId": self.product_id,
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
-                    "type": "tpm",
+                    "type": "TPM",
                     "tpmEnrollmentInformation": {"endorsementKey": "12345"},
                 },
                 "certificationBadgeConfigurations": [
