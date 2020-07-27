@@ -4,14 +4,36 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from time import sleep
 from azext_iot.product.providers.aics import AICSProvider
+from azext_iot.product.shared import DeviceTestTaskStatus as Status
+from knack.util import CLIError
 
 
 def show(cmd, test_id, run_id=None, wait=False, poll_interval=3):
+    final_statuses = [
+        Status.failed.value,
+        Status.completed.value,
+        Status.cancelled.value,
+    ]
     ap = AICSProvider(cmd)
     if run_id:
-        return ap.show_test_run(test_id=test_id, run_id=run_id)
-    return ap.show_test_run_latest(test_id=test_id)
+        response = ap.show_test_run(test_id=test_id, run_id=run_id)
+    else:
+        response = ap.show_test_run_latest(test_id=test_id)
+
+    if not response:
+        error = "No test run found for test ID '{}'".format(test_id)
+        if run_id:
+            error = error + " with run ID '{}'".format(run_id)
+        raise CLIError(error)
+    status = response.status
+    run_id = response.id
+    while all([wait, status, run_id]) and status not in final_statuses:
+        sleep(poll_interval)
+        response = ap.show_test_run(test_id=test_id, run_id=run_id)
+        status = response.status
+    return response
 
 
 def submit(cmd, test_id, run_id):
