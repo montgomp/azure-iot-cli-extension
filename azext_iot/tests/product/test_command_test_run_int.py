@@ -13,7 +13,7 @@ class TestProductDeviceTestRuns(LiveScenarioTest):
         super(TestProductDeviceTestRuns, self).__init__(_)
         self.kwargs.update(
             {
-                "device_test_id": "3beb0e67-33d0-4896-b69b-91c7b7ce8fab",
+                "device_test_id": "524ac74f-752b-4748-9667-45cd09e8a098",
                 "generate_task": TaskType.GenerateTestCases.value,
                 "run_task": TaskType.QueueTestRun.value,
             }

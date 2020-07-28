@@ -28,7 +28,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
     def test_e2e(self):
 
         # Test workspace init
-        self.cmd("iot product test init --product-name {product_name}")
+        self.cmd("iot product init --product-name {product_name}")
 
         # Test requirement list
         self.cmd("iot product requirement list")
