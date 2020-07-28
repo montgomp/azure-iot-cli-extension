@@ -17,7 +17,6 @@ requirements_ops = CliCommandType(
     operations_tmpl="azext_iot.product.command_requirements#{}"
 )
 
-
 def load_product_commands(self, _):
     with self.command_group("iot product", command_type=product_ops) as g:
         g.command("init", "initialize_workspace")

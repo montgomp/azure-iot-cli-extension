@@ -168,4 +168,8 @@ def load_product_test_params(self, _):
             help="Retrieve the latest test runs",
             arg_group="IoT Device Certification",
             arg_type=get_three_state_flag(),
+<<<<<<< HEAD
         )
+=======
+        )
+>>>>>>> 56c2079... WIP
