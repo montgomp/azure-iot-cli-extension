@@ -25,7 +25,7 @@ def create(
     endorsement_key=None,
     badge_type=BadgeType.IotDevice.value,
     models=None,
-    provisioning=True,
+    skip_provisioning=False,
     base_url=None,
 ):
     if attestation_type == AttestationType.x509.value and not certificate_path:
@@ -71,6 +71,8 @@ def create(
     )
 
     ap = AICSProvider(cmd, base_url)
+
+    provisioning = not skip_provisioning
     return ap.create_test(
         test_configuration=test_configuration, provisioning=provisioning
     )

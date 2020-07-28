@@ -21,9 +21,9 @@ def load_product_test_params(self, _):
             arg_group="IoT Device Certification",
         )
         c.argument(
-            "provisioning",
-            options_list=["--provisioning"],
-            help="Determines whether the service generates provisioning configuration. "
+            "skip_provisioning",
+            options_list=["--skip-provisioning", "--sp"],
+            help="Determines whether the service skips generating provisioning configuration. "
             + "Only applies to SymmetricKey and ConnectionString provisioning types",
             arg_group="IoT Device Certification",
         )

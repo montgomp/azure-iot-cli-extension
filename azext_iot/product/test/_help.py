@@ -27,9 +27,9 @@ def load_help():
         - name: Basic usage
           text: >
             az iot product test create --configuration-file {configuration_file}
-        - name: Generate provisioning configuration info from the server
+        - name: Do not have service create provisioning configuration
           text: >
-            az iot product test create --configuration-file {configuration_file} --provisioning
+            az iot product test create --configuration-file {configuration_file} --skip-provisioning
     """
     helps[
         "iot product test search"
