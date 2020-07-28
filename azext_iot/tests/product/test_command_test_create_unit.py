@@ -112,7 +112,7 @@ class TestTestCreateUnit(unittest.TestCase):
             str(context.exception),
         )
 
-    @mock.patch("azext_iot.product.command_tests._process_models_directory")
+    @mock.patch("azext_iot.product.test.command_tests._process_models_directory")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test")
     def test_create_with_default_badge_type_doesnt_check_models(
         self, mock_service, mock_process_models
@@ -140,7 +140,7 @@ class TestTestCreateUnit(unittest.TestCase):
             },
         )
 
-    @mock.patch("azext_iot.product.command_tests._process_models_directory")
+    @mock.patch("azext_iot.product.test.command_tests._process_models_directory")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test")
     def test_create_with_pnp_badge_type_checks_models(
         self, mock_service, mock_process_models
@@ -183,8 +183,8 @@ class TestTestCreateUnit(unittest.TestCase):
             },
         )
 
-    @mock.patch("azext_iot.product.command_tests._read_certificate_from_file")
-    @mock.patch("azext_iot.product.command_tests._process_models_directory")
+    @mock.patch("azext_iot.product.test.command_tests._read_certificate_from_file")
+    @mock.patch("azext_iot.product.test.command_tests._process_models_directory")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test")
     def test_create_with_cert_auth_reads_cert_file(
         self, mock_service, mock_process_models, mock_read_certificate
@@ -232,8 +232,8 @@ class TestTestCreateUnit(unittest.TestCase):
             },
         )
 
-    @mock.patch("azext_iot.product.command_tests._read_certificate_from_file")
-    @mock.patch("azext_iot.product.command_tests._process_models_directory")
+    @mock.patch("azext_iot.product.test.command_tests._read_certificate_from_file")
+    @mock.patch("azext_iot.product.test.command_tests._process_models_directory")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test")
     def test_create_with_tpm(
         self, mock_service, mock_process_models, mock_read_certificate
@@ -280,7 +280,7 @@ class TestTestCreateUnit(unittest.TestCase):
         )
 
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test")
-    @mock.patch("azext_iot.product.command_tests._create_from_file")
+    @mock.patch("azext_iot.product.test.command_tests._create_from_file")
     def test_create_with_configuration_file(self, mock_from_file, mock_sdk_create):
         mock_file_data = {"mock": "data"}
         mock_from_file.return_value = mock_file_data
