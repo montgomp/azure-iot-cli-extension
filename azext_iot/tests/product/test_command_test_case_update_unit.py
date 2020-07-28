@@ -7,7 +7,7 @@
 import unittest
 import mock
 from knack.util import CLIError
-from azext_iot.product.command_test_cases import update
+from azext_iot.product.test.command_test_cases import update
 
 
 class TestTestCaseUpdate(unittest.TestCase):
@@ -35,7 +35,7 @@ class TestTestCaseUpdate(unittest.TestCase):
 
     @mock.patch("os.path.exists")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.update_test_cases")
-    @mock.patch("azext_iot.product.command_test_cases.process_json_arg")
+    @mock.patch("azext_iot.product.test.command_test_cases.process_json_arg")
     def test_update(self, mock_json_parser, mock_api, mock_exists):
         mock_exists.return_value = True
         mock_json_payload = {}

@@ -10,8 +10,8 @@ import mock
 import json
 import responses
 from knack.util import CLIError
-from azext_iot.product.command_test_tasks import create, delete, show
 from azext_iot.sdk.product.models import DeviceTestTask, TestRun
+from azext_iot.product.test.command_test_tasks import create, delete, show
 from azext_iot.product.shared import TaskType
 from azext_iot.product.shared import BASE_URL
 

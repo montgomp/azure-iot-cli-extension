@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import json
 from azure.cli.testsdk import LiveScenarioTest
 from azext_iot.product.shared import TaskType
 

@@ -7,7 +7,7 @@
 import unittest
 import mock
 from knack.util import CLIError
-from azext_iot.product.command_tests import update
+from azext_iot.product.test.command_tests import update
 from azext_iot.product.shared import BadgeType, AttestationType
 
 
@@ -76,7 +76,7 @@ class TestTestUpdateUnit(unittest.TestCase):
         )
 
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.update_device_test")
-    @mock.patch("azext_iot.product.command_tests._create_from_file")
+    @mock.patch("azext_iot.product.test.command_tests._create_from_file")
     def test_update_from_file(self, mock_from_file, mock_sdk_update):
         mock_file_data = {"mock": "data"}
         mock_from_file.return_value = mock_file_data
@@ -89,7 +89,7 @@ class TestTestUpdateUnit(unittest.TestCase):
             raw=True,
         )
 
-    @mock.patch("azext_iot.product.command_tests._read_certificate_from_file")
+    @mock.patch("azext_iot.product.test.command_tests._read_certificate_from_file")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.update_device_test")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.get_device_test")
     def test_update_symmetric_key_to_cert(
@@ -256,7 +256,7 @@ class TestTestUpdateUnit(unittest.TestCase):
             },
         )
 
-    @mock.patch("azext_iot.product.command_tests._process_models_directory")
+    @mock.patch("azext_iot.product.test.command_tests._process_models_directory")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.update_device_test")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.get_device_test")
     def test_update_iotdevice_to_pnp(
@@ -337,7 +337,7 @@ class TestTestUpdateUnit(unittest.TestCase):
             },
         )
 
-    @mock.patch("azext_iot.product.command_tests._process_models_directory")
+    @mock.patch("azext_iot.product.test.command_tests._process_models_directory")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.update_device_test")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.get_device_test")
     def test_update_pnp_to_iotdevice(

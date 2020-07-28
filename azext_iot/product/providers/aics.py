@@ -31,8 +31,8 @@ def process_cloud_error(func):
 
 
 class AICSProvider(AICSServiceProvider):
-    def __init__(self, cmd):
-        super(AICSProvider, self).__init__(cmd=cmd)
+    def __init__(self, cmd, base_url):
+        super(AICSProvider, self).__init__(cmd=cmd, base_url=base_url)
         self.mgmt_sdk = self.get_mgmt_sdk()
 
     # Requirements

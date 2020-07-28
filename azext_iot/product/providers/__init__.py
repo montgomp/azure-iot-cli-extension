@@ -12,9 +12,9 @@ from azext_iot.constants import VERSION as cli_version, USER_AGENT
 __all__ = ["aics_service_factory", "AICSServiceProvider"]
 
 
-def aics_service_factory(cmd):
-    creds = AICSAuthentication(cmd=cmd, base_url=BASE_URL)
-    api = AICSAPI(base_url=BASE_URL, credentials=creds)
+def aics_service_factory(cmd, base_url):
+    creds = AICSAuthentication(cmd=cmd, base_url=base_url or BASE_URL)
+    api = AICSAPI(base_url=base_url or BASE_URL, credentials=creds)
 
     api.config.add_user_agent(USER_AGENT)
     api.config.add_user_agent("azcli/aics/{}".format(cli_version))
@@ -23,9 +23,10 @@ def aics_service_factory(cmd):
 
 
 class AICSServiceProvider(object):
-    def __init__(self, cmd):
+    def __init__(self, cmd, base_url):
         assert cmd
         self.cmd = cmd
+        self.base_url = base_url
 
     def get_mgmt_sdk(self):
-        return aics_service_factory(self.cmd)
+        return aics_service_factory(self.cmd, self.base_url)
