@@ -19,13 +19,13 @@ mock_target = {}
 mock_target["entity"] = BASE_URL
 device_test_id = "12345"
 device_test_task_id = "54321"
-device_test_run_id = '67890'
+device_test_run_id = "67890"
 task_result = {
     "id": device_test_task_id,
     "status": "Queued",
     "type": "QueueTestRun",
     "deviceTestId": device_test_id,
-    "resultLink":'{}/testRuns/{}'.format(device_test_id, device_test_run_id)
+    "resultLink": "{}/testRuns/{}".format(device_test_id, device_test_run_id),
 }
 
 run_result = {
@@ -33,7 +33,7 @@ run_result = {
     "start_time": "start_time",
     "end_time": "end_time",
     "status": "Completed",
-    "certificationBadgeResults": []
+    "certificationBadgeResults": [],
 }
 
 queued_task = DeviceTestTask(
@@ -111,6 +111,29 @@ class TestTaskCreate(unittest.TestCase):
 
         # initial create response returned
         assert result == queued_task
+
+    @mock.patch(
+        "azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test_task",
+        return_value={"error": "task currently running"},
+    )
+    def test_task_create_failure(self, mock_create):
+        with self.assertRaises(CLIError) as context:
+            create(self, test_id=device_test_id, wait=False)
+            self.assertTrue({"error": "task currently running"}, context)
+
+    @mock.patch(
+        "azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test_task",
+        return_value=None,
+    )
+    def test_task_create_empty_response(self, mock_create):
+        with self.assertRaises(CLIError) as context:
+            create(self, test_id=device_test_id, wait=False)
+            self.assertTrue(
+                "Failed to create device test task - please ensure a device test exists with Id {}".format(
+                    device_test_id
+                ),
+                context.exception,
+            )
 
 
 class TestTaskShow(unittest.TestCase):
@@ -277,7 +300,8 @@ class TestTasksSDK(object):
         assert reqs[2].method == "GET"
         url = reqs[2].url
         assert (
-            "deviceTests/{}/testRuns/{}".format(device_test_id, device_test_run_id) in url
+            "deviceTests/{}/testRuns/{}".format(device_test_id, device_test_run_id)
+            in url
         )
 
         # awaiting a queued test run should yield a test run object
