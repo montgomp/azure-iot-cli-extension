@@ -6,12 +6,19 @@
 
 import json
 from azure.cli.testsdk import LiveScenarioTest
+from azext_iot.product.shared import TaskType
 
 
 class TestProductDeviceTestTasks(LiveScenarioTest):
     def __init__(self, _):
         super(TestProductDeviceTestTasks, self).__init__(_)
-        self.kwargs.update({"device_test_id": "3beb0e67-33d0-4896-b69b-91c7b7ce8fab"})
+        self.kwargs.update(
+            {
+                "device_test_id": "3beb0e67-33d0-4896-b69b-91c7b7ce8fab",
+                "generate_task": TaskType.GenerateTestCases.value,
+                "queue_task": TaskType.QueueTestRun.value,
+            }
+        )
 
     def setup(self):
         return True
@@ -21,9 +28,9 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
 
     def test_product_device_test_tasks(self):
 
-        # create task
+        # create task for GenerateTestCases
         created = self.cmd(
-            "iot product test task create -t {device_test_id}"
+            "iot product test task create -t {device_test_id} --type {generate_task} --wait"
         ).get_output_in_json()
         assert created["deviceTestId"] == self.kwargs["device_test_id"]
         assert json.dumps(created)
@@ -46,6 +53,13 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
         show = self.cmd(
             "iot product test task show -t {device_test_id}", expect_failure=True
         )
+
+        # queue test run
+        created = self.cmd(
+            "iot product test task create -t {device_test_id} --type {queue_task} --wait"
+        ).get_output_in_json()
+        assert json.dumps(created)
+        assert json.dumps(created.get("certificationBadgeResults"))
 
         # delete test task
         self.cmd(
