@@ -11,7 +11,7 @@ import json
 import responses
 from knack.util import CLIError
 from azext_iot.product.command_test_tasks import create, delete, show
-from azext_iot.sdk.product.models import DeviceTestTask
+from azext_iot.sdk.product.models import DeviceTestTask, TestRun
 from azext_iot.product.shared import TaskType
 from azext_iot.product.shared import BASE_URL
 
@@ -19,13 +19,23 @@ mock_target = {}
 mock_target["entity"] = BASE_URL
 device_test_id = "12345"
 device_test_task_id = "54321"
+device_test_run_id = "67890"
 task_result = {
     "id": device_test_task_id,
     "status": "Queued",
     "type": "QueueTestRun",
     "deviceTestId": device_test_id,
-    "resultLink": "string",
+    "resultLink": "{}/testRuns/{}".format(device_test_id, device_test_run_id),
 }
+
+run_result = {
+    "id": device_test_run_id,
+    "start_time": "start_time",
+    "end_time": "end_time",
+    "status": "Completed",
+    "certificationBadgeResults": [],
+}
+
 queued_task = DeviceTestTask(
     id=device_test_task_id, device_test_id=device_test_id, status="Queued"
 )
@@ -36,7 +46,7 @@ running_task = DeviceTestTask(
     id=device_test_task_id, device_test_id=device_test_id, status="Running"
 )
 completed_task = DeviceTestTask(
-    id=device_test_task_id, device_test_id=device_test_id, status="Completed"
+    id=device_test_task_id, device_test_id=device_test_id, status="Completed",
 )
 
 task_result_body = json.dumps(task_result)
@@ -102,6 +112,29 @@ class TestTaskCreate(unittest.TestCase):
         # initial create response returned
         assert result == queued_task
 
+    @mock.patch(
+        "azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test_task",
+        return_value={"error": "task currently running"},
+    )
+    def test_task_create_failure(self, mock_create):
+        with self.assertRaises(CLIError) as context:
+            create(self, test_id=device_test_id, wait=False)
+            self.assertTrue({"error": "task currently running"}, context)
+
+    @mock.patch(
+        "azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test_task",
+        return_value=None,
+    )
+    def test_task_create_empty_response(self, mock_create):
+        with self.assertRaises(CLIError) as context:
+            create(self, test_id=device_test_id, wait=False)
+            self.assertTrue(
+                "Failed to create device test task - please ensure a device test exists with Id {}".format(
+                    device_test_id
+                ),
+                context.exception,
+            )
+
 
 class TestTaskShow(unittest.TestCase):
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.get_device_test_task")
@@ -142,6 +175,8 @@ class TestTasksSDK(object):
     # create call
     @pytest.fixture(params=[202])
     def service_client_create(self, mocked_response, request):
+
+        # create test task
         mocked_response.add(
             method=responses.POST,
             url="{}/deviceTests/{}/tasks{}".format(
@@ -155,7 +190,7 @@ class TestTasksSDK(object):
         )
         yield mocked_response
 
-    # get call, includes create
+    # create task, get task, get run (for --wait)
     @pytest.fixture(params=[200])
     def service_client_create_wait(
         self, service_client_create, mocked_response, request
@@ -168,6 +203,18 @@ class TestTasksSDK(object):
             body=finished_task_result_body,
             headers={"x-ms-command-statuscode": str(request.param)},
             status=request.param,
+            content_type="application/json",
+            match_querystring=False,
+        )
+        # get completed queued test run
+        mocked_response.add(
+            method=responses.GET,
+            url="{}/deviceTests/{}/testRuns/{}{}".format(
+                mock_target["entity"], device_test_id, device_test_run_id, api_string
+            ),
+            body=json.dumps(run_result),
+            headers={"x-ms-command-statuscode": str(200)},
+            status=200,
             content_type="application/json",
             match_querystring=False,
         )
@@ -235,19 +282,31 @@ class TestTasksSDK(object):
     def test_sdk_task_create_wait(self, fixture_cmd, service_client_create_wait):
         result = create(fixture_cmd, test_id=device_test_id, wait=True, poll_interval=1)
         reqs = list(map(lambda call: call.request, service_client_create_wait.calls))
+
+        # Call 0 - create test task
         assert reqs[0].method == "POST"
         assert json.loads(reqs[0].body)["taskType"] == "QueueTestRun"
         url = reqs[0].url
         assert "deviceTests/{}/tasks".format(device_test_id) in url
 
+        # Call 1 - get task status
         assert reqs[1].method == "GET"
         url = reqs[1].url
         assert (
             "deviceTests/{}/tasks/{}".format(device_test_id, device_test_task_id) in url
         )
 
-        assert result.id == device_test_task_id
-        assert result.device_test_id == device_test_id
+        # Call 2 - get run results
+        assert reqs[2].method == "GET"
+        url = reqs[2].url
+        assert (
+            "deviceTests/{}/testRuns/{}".format(device_test_id, device_test_run_id)
+            in url
+        )
+
+        # awaiting a queued test run should yield a test run object
+        assert isinstance(result, TestRun)
+        assert result.id == device_test_run_id
         assert result.status == "Completed"
 
     def test_sdk_task_delete(self, fixture_cmd, service_client_delete):
