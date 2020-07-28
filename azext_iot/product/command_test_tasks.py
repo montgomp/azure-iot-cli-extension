@@ -34,6 +34,19 @@ def create(
         sleep(poll_interval)
         response = ap.show_test_task(test_id=test_id, task_id=task_id)
         status = response.status
+
+    # if a task of 'queueTestRun' is awaited, return the run results
+    if all(
+        [
+            wait,
+            status in final_statuses,
+            task_type == TaskType.QueueTestRun.value,
+            response.result_link
+        ]
+    ):
+            run_id = response.result_link.split('/')[-1]
+            return ap.show_test_run(test_id=test_id, run_id=run_id) if run_id else response
+
     return response
 
 
