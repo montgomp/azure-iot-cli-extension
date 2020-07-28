@@ -172,8 +172,4 @@ def load_help():
         - name: Latest product test run
           text: >
             az iot product test run show --test-id {test_id} --latest
-<<<<<<< HEAD
     """
-=======
-    """
->>>>>>> 56c2079... WIP
