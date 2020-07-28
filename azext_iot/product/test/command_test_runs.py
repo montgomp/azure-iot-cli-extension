@@ -10,7 +10,7 @@ from azext_iot.product.shared import DeviceTestTaskStatus as Status
 from knack.util import CLIError
 
 
-def show(cmd, test_id, run_id=None, wait=False, poll_interval=3):
+def show(cmd, test_id, run_id=None, wait=False, poll_interval=3, base_url=None):
     final_statuses = [
         Status.failed.value,
         Status.completed.value,
@@ -36,6 +36,6 @@ def show(cmd, test_id, run_id=None, wait=False, poll_interval=3):
     return response
 
 
-def submit(cmd, test_id, run_id):
+def submit(cmd, test_id, run_id, base_url=None):
     ap = AICSProvider(cmd)
     return ap.submit_test_run(test_id=test_id, run_id=run_id)

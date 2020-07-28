@@ -13,8 +13,8 @@ __all__ = ["aics_service_factory", "AICSServiceProvider"]
 
 
 def aics_service_factory(cmd):
-    creds = AICSAuthentication(cmd=cmd, base_url=BASE_URL)
-    api = AICSAPI(base_url=BASE_URL, credentials=creds)
+    creds = AICSAuthentication(cmd=cmd, base_url= cmd.base_url or BASE_URL)
+    api = AICSAPI(base_url=cmd.base_url or BASE_URL, credentials=creds)
 
     api.config.add_user_agent(USER_AGENT)
     api.config.add_user_agent("azcli/aics/{}".format(cli_version))

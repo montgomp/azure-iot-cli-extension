@@ -9,12 +9,12 @@ from azext_iot.common.utility import process_json_arg
 from knack.util import CLIError
 
 
-def list(cmd, test_id):
+def list(cmd, test_id, base_url=None):
     ap = AICSProvider(cmd)
     return ap.show_test_cases(test_id=test_id)
 
 
-def update(cmd, test_id, configuration_file):
+def update(cmd, test_id, configuration_file, base_url=None):
     import os
 
     if not os.path.exists(configuration_file):
