@@ -7,7 +7,7 @@
 import unittest
 import mock
 from knack.util import CLIError
-from azext_iot.product.command_test_cases import update
+from azext_iot.product.test.command_test_cases import update
 
 
 class TestTestCaseUpdate(unittest.TestCase):

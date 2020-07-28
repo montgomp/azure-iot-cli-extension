@@ -8,8 +8,8 @@
 CLI parameter definitions.
 """
 
-from azure.cli.core.commands.parameters import get_three_state_flag, get_enum_type
-from azext_iot.product.shared import AttestationType, BadgeType, DeviceType, TaskType
+from azure.cli.core.commands.parameters import get_enum_type
+from azext_iot.product.shared import BadgeType
 
 
 def load_product_params(self, _):

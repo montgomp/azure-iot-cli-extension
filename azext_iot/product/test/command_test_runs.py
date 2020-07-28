@@ -16,7 +16,7 @@ def show(cmd, test_id, run_id=None, wait=False, poll_interval=3, base_url=None):
         Status.completed.value,
         Status.cancelled.value,
     ]
-    ap = AICSProvider(cmd)
+    ap = AICSProvider(cmd, base_url)
     if run_id:
         response = ap.show_test_run(test_id=test_id, run_id=run_id)
     else:
@@ -37,5 +37,5 @@ def show(cmd, test_id, run_id=None, wait=False, poll_interval=3, base_url=None):
 
 
 def submit(cmd, test_id, run_id, base_url=None):
-    ap = AICSProvider(cmd)
+    ap = AICSProvider(cmd, base_url)
     return ap.submit_test_run(test_id=test_id, run_id=run_id)

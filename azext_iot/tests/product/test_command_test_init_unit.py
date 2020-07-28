@@ -6,7 +6,7 @@
 
 import unittest
 import mock
-from azext_iot.product.command_tests import initialize_workspace
+from azext_iot.product.command_product import initialize_workspace
 
 
 class InitClass(unittest.TestCase):

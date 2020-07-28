@@ -19,7 +19,7 @@ test_cases_ops = CliCommandType(
     operations_tmpl="azext_iot.product.test.command_test_cases#{}"
 )
 
-test_runs_ops = CliCommandType(operations_tmpl="azext_iot.test.product.command_test_runs#{}")
+test_runs_ops = CliCommandType(operations_tmpl="azext_iot.product.test.command_test_runs#{}")
 
 
 def load_product_test_commands(self, _):

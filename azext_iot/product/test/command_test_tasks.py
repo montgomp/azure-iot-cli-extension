@@ -13,7 +13,7 @@ from knack.util import CLIError
 def create(
     cmd, test_id, task_type=TaskType.QueueTestRun.value, wait=False, poll_interval=3, base_url=None
 ):
-    ap = AICSProvider(cmd)
+    ap = AICSProvider(cmd, base_url)
     final_statuses = [
         Status.failed.value,
         Status.completed.value,
@@ -38,12 +38,12 @@ def create(
 
 
 def delete(cmd, test_id, task_id, base_url=None):
-    ap = AICSProvider(cmd)
+    ap = AICSProvider(cmd, base_url)
     return ap.delete_test_task(test_id=test_id, task_id=task_id)
 
 
 def show(cmd, test_id, task_id=None, running=False, base_url=None):
-    ap = AICSProvider(cmd)
+    ap = AICSProvider(cmd, base_url)
     if task_id:
         return ap.show_test_task(test_id=test_id, task_id=task_id)
     elif running:

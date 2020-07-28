@@ -39,4 +39,5 @@ class DeviceTestTaskStatus(Enum):
     cancelled = "Cancelled"
 
 
-BASE_URL = "https://certify.azureiotsolutions.com/"
+# BASE_URL = "https://certify.azureiotsolutions.com/"
+BASE_URL = "https://test.certsvc.trafficmanager.net/"

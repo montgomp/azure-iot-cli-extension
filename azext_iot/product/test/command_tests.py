@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from uuid import uuid4
 from azext_iot.product.providers.aics import AICSProvider
 from azext_iot.sdk.product.models import DeviceTestSearchOptions
 from azext_iot.product.shared import BadgeType, AttestationType
@@ -71,14 +70,14 @@ def create(
         )
     )
 
-    ap = AICSProvider(cmd)
+    ap = AICSProvider(cmd, base_url)
     return ap.create_test(
         test_configuration=test_configuration, provisioning=provisioning
     )
 
 
 def show(cmd, test_id, base_url=None):
-    ap = AICSProvider(cmd)
+    ap = AICSProvider(cmd, base_url)
     return ap.show_test(test_id)
 
 
@@ -114,7 +113,7 @@ def update(
         raise CLIError(
             "Connection string is only available for Edge Compatible modules testing"
         )
-    ap = AICSProvider(cmd)
+    ap = AICSProvider(cmd, base_url)
     if configuration_file:
         test_configuration = _create_from_file(configuration_file)
         return ap.update_test(test_id=test_id, test_configuration=test_configuration, provisioning=provisioning)
@@ -179,7 +178,7 @@ def search(cmd, product_id=None, registration_id=None, certificate_name=None, ba
     if not any([product_id or registration_id or certificate_name]):
         raise CLIError("At least one search criteria must be specified")
 
-    ap = AICSProvider(cmd)
+    ap = AICSProvider(cmd, base_url)
     searchOptions = DeviceTestSearchOptions(
         product_id=product_id,
         dps_registration_id=registration_id,

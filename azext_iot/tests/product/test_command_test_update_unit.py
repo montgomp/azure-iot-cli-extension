@@ -7,7 +7,7 @@
 import unittest
 import mock
 from knack.util import CLIError
-from azext_iot.product.command_tests import update
+from azext_iot.product.test.command_tests import update
 from azext_iot.product.shared import BadgeType, AttestationType
 
 
