@@ -158,18 +158,18 @@ def load_help():
         examples:
         - name: Basic usage
           text: >
-            az iot product test run submit --test-id {test_id}
+            az iot product test run submit --test-id {test_id} --run-id {run_id}
     """
     helps[
         "iot product test run show"
     ] = """
         type: command
-        short-summary: Show the status of a testing run. Use --latest for most recently queued test run
+        short-summary: Show the status of a testing run.
         examples:
+        - name: Latest product test run
+          text: >
+            az iot product test run show --test-id {test_id}
         - name: Testing status by --run-id
           text: >
             az iot product test run show --test-id {test_id} --run-id {run_id}
-        - name: Latest product test run
-          text: >
-            az iot product test run show --test-id {test_id} --latest
     """

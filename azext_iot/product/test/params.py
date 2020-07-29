@@ -15,12 +15,6 @@ from azext_iot.product.shared import AttestationType, DeviceType, TaskType
 def load_product_test_params(self, _):
     with self.argument_context("iot product test") as c:
         c.argument(
-            "working_folder",
-            options_list=["--working-folder", "--wf"],
-            help="The folder to create in current path",
-            arg_group="IoT Device Certification",
-        )
-        c.argument(
             "skip_provisioning",
             options_list=["--skip-provisioning", "--sp"],
             help="Determines whether the service skips generating provisioning configuration. "
@@ -169,11 +163,4 @@ def load_product_test_params(self, _):
             options_list=["--poll-interval", "--interval"],
             help="Used in conjunction with --wait. Sepcifies how frequently (in seconds) polling occurs",
             arg_group="IoT Device Certification",
-        )
-        c.argument(
-            "latest",
-            options_list=["--latest"],
-            help="Retrieve the latest test runs",
-            arg_group="IoT Device Certification",
-            arg_type=get_three_state_flag(),
         )
