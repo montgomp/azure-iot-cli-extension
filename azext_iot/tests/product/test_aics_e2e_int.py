@@ -6,7 +6,6 @@
 
 import uuid
 import json
-import os
 from time import sleep
 from . import AICSLiveScenarioTest
 from azext_iot.product.shared import (
@@ -101,7 +100,7 @@ class TestProductDeviceTestTasks(AICSLiveScenarioTest):
 
         assert json.dumps(test_task)
         assert test_task.get("status") == DeviceTestTaskStatus.queued.value
-        assert test_task.get("error") == None
+        assert test_task.get("error") is None
         assert test_task.get("type") == TaskType.GenerateTestCases.value
 
         # wait for generate task to complete
@@ -112,7 +111,7 @@ class TestProductDeviceTestTasks(AICSLiveScenarioTest):
             "iot product test task show -t {device_test_id} --task-id {generate_task_id} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert test_task.get("status") == DeviceTestTaskStatus.completed.value
-        assert test_task.get("error") == None
+        assert test_task.get("error") is None
         assert test_task.get("type") == TaskType.GenerateTestCases.value
 
         # Test case operations

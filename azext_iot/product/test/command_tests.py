@@ -6,7 +6,7 @@
 
 from azext_iot.product.providers.aics import AICSProvider
 from azext_iot.sdk.product.models import DeviceTestSearchOptions
-from azext_iot.product.shared import BadgeType, AttestationType
+from azext_iot.product.shared import BadgeType, AttestationType, TaskType
 from knack.log import get_logger
 from knack.util import CLIError
 import os
@@ -27,6 +27,7 @@ def create(
     models=None,
     skip_provisioning=False,
     base_url=None,
+    generate_test_cases=False
 ):
     if attestation_type == AttestationType.x509.value and not certificate_path:
         raise CLIError("If attestation type is x509, certificate path is required")
@@ -73,8 +74,22 @@ def create(
     ap = AICSProvider(cmd, base_url)
 
     provisioning = not skip_provisioning
-    return ap.create_test(
+    test_data = ap.create_test(
         test_configuration=test_configuration, provisioning=provisioning
+    )
+
+    if not generate_test_cases:
+        return test_data
+
+    test_id = test_data.id
+
+    import azext_iot.product.test.command_test_tasks as tasks
+    return tasks.create(
+        cmd=cmd,
+        test_id=test_id,
+        task_type=TaskType.GenerateTestCases.value,
+        wait=True,
+        base_url=base_url
     )
 
 
