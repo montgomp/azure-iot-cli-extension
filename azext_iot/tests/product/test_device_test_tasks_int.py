@@ -5,8 +5,9 @@
 # --------------------------------------------------------------------------------------------
 
 import json
+from time import sleep
 from azure.cli.testsdk import LiveScenarioTest
-from azext_iot.product.shared import TaskType
+from azext_iot.product.shared import TaskType, DeviceTestTaskStatus
 
 
 class TestProductDeviceTestTasks(LiveScenarioTest):
@@ -14,7 +15,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
         super(TestProductDeviceTestTasks, self).__init__(_)
         self.kwargs.update(
             {
-                "device_test_id": "3beb0e67-33d0-4896-b69b-91c7b7ce8fab",
+                "device_test_id": "524ac74f-752b-4748-9667-45cd09e8a098",
                 "generate_task": TaskType.GenerateTestCases.value,
                 "queue_task": TaskType.QueueTestRun.value,
             }
@@ -46,22 +47,33 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
         assert show["deviceTestId"] == self.kwargs["device_test_id"]
         assert show["id"] == self.kwargs["device_test_task_id"]
 
-        # show running tasks
-        show = self.cmd("iot product test task show -t {device_test_id} --running")
-
-        # error - show requires task-id or --running
-        show = self.cmd(
-            "iot product test task show -t {device_test_id}", expect_failure=True
-        )
-
-        # queue test run
-        created = self.cmd(
-            "iot product test task create -t {device_test_id} --type {queue_task} --wait"
+        # Queue a test run without wait, get run_id
+        queue_task = self.cmd(
+            "iot product test task create -t {device_test_id} --type {queue_task}"
         ).get_output_in_json()
-        assert json.dumps(created)
-        assert json.dumps(created.get("certificationBadgeResults"))
+        assert queue_task["type"] == TaskType.QueueTestRun.value
+        assert queue_task["status"] == DeviceTestTaskStatus.queued.value
 
-        # delete test task
-        self.cmd(
-            "iot product test task delete -t {device_test_id} --task-id {device_test_task_id}"
-        )
+        self.kwargs.update({"queue_task_id": queue_task["id"]})
+
+        # allow test to start running
+        sleep(5)
+
+        queue_task = self.cmd(
+            "iot product test task show -t {device_test_id} --task-id {queue_task_id}"
+        ).get_output_in_json()
+        assert queue_task["type"] == TaskType.QueueTestRun.value
+        assert queue_task["status"] == DeviceTestTaskStatus.running.value
+
+        # Cancel running test task
+        self.cmd("iot product test task delete -t {device_test_id} --task-id {queue_task_id}")
+
+        #allow test to be cancelled
+        sleep(5)
+
+        # get cancelled test task
+        show = self.cmd(
+            "iot product test task show -t {device_test_id} --task-id {queue_task_id}"
+        ).get_output_in_json()
+
+        assert show['status'] == DeviceTestTaskStatus.cancelled.value
