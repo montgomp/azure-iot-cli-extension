@@ -4,12 +4,14 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azure.cli.testsdk import LiveScenarioTest
+from . import AICSLiveScenarioTest
 
 
-class TestRequirementList(LiveScenarioTest):
+class TestRequirementList(AICSLiveScenarioTest):
     def test_list_default(self):
-        create_output = self.cmd("iot product requirement list").get_output_in_json()
+        create_output = self.cmd(
+            "iot product requirement list --base-url {BASE_URL}"
+        ).get_output_in_json()
         expected = [
             {
                 "badgeType": "IotDevice",
@@ -22,7 +24,7 @@ class TestRequirementList(LiveScenarioTest):
 
     def test_list_device(self):
         create_output = self.cmd(
-            "iot product requirement list --badge-type IotDevice"
+            "iot product requirement list --badge-type IotDevice --base-url {BASE_URL}"
         ).get_output_in_json()
         expected = [
             {
@@ -36,7 +38,7 @@ class TestRequirementList(LiveScenarioTest):
 
     def test_list_edge(self):
         create_output = self.cmd(
-            "iot product requirement list --badge-type IotEdgeCompatible"
+            "iot product requirement list --badge-type IotEdgeCompatible --base-url {BASE_URL}"
         ).get_output_in_json()
         expected = [
             {
@@ -48,7 +50,7 @@ class TestRequirementList(LiveScenarioTest):
 
     def test_list_pnp(self):
         create_output = self.cmd(
-            "iot product requirement list --badge-type Pnp"
+            "iot product requirement list --badge-type Pnp --base-url {BASE_URL}"
         ).get_output_in_json()
         expected = [
             {

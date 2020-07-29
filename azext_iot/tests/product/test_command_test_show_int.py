@@ -4,10 +4,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azure.cli.testsdk import LiveScenarioTest
+from . import AICSLiveScenarioTest
 
 
-class TestTestShowInt(LiveScenarioTest):
+class TestTestShowInt(AICSLiveScenarioTest):
     def __init__(self, test_case):
         self.test_id = "524ac74f-752b-4748-9667-45cd09e8a098"
         self.product_id = "81cf6ae4-1702-4158-8abe-72473c9ae5ab"
@@ -16,7 +16,9 @@ class TestTestShowInt(LiveScenarioTest):
     def test_show_test(self):
         # call the GET /deviceTest/{test_id}
         output = self.cmd(
-            "iot product test show -t {}".format(self.test_id,)
+            "iot product test show -t {} --base-url {}".format(
+                self.test_id, self.kwargs["BASE_URL"]
+            )
         ).get_output_in_json()
 
         assert output["productId"] == self.product_id

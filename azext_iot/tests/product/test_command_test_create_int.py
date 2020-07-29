@@ -4,12 +4,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azure.cli.testsdk import LiveScenarioTest
+from . import AICSLiveScenarioTest
 from azext_iot.product.shared import AttestationType, BadgeType, DeviceType
 from uuid import uuid4
 
 
-class TestTestCreateInt(LiveScenarioTest):
+class TestTestCreateInt(AICSLiveScenarioTest):
     def __init__(self, test_case):
         self.product_id = str(uuid4())
         super(TestTestCreateInt, self).__init__(test_case)
@@ -21,14 +21,14 @@ class TestTestCreateInt(LiveScenarioTest):
 
         # call the POST /deviceTest
         output = self.cmd(
-            "iot product test create -p {} --dt {} --at {} --bt {}".format(
-                self.product_id, device_type, attestation_type, badge_type
+            "iot product test create -p {} --dt {} --at {} --bt {} --base-url {}".format(
+                self.product_id,
+                device_type,
+                attestation_type,
+                badge_type,
+                self.kwargs["BASE_URL"],
             )
         ).get_output_in_json()
-
-        import six
-
-        six.print_(output)
 
         assert output["productId"] == self.product_id
         assert output["deviceType"].lower() == device_type.lower()

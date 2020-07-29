@@ -8,11 +8,16 @@ import uuid
 import json
 import os
 from time import sleep
-from azure.cli.testsdk import LiveScenarioTest
-from azext_iot.product.shared import TaskType, BadgeType, DeviceTestTaskStatus, AttestationType
+from . import AICSLiveScenarioTest
+from azext_iot.product.shared import (
+    TaskType,
+    BadgeType,
+    DeviceTestTaskStatus,
+    AttestationType,
+)
 
 
-class TestProductDeviceTestTasks(LiveScenarioTest):
+class TestProductDeviceTestTasks(AICSLiveScenarioTest):
     def __init__(self, test_case):
         super(TestProductDeviceTestTasks, self).__init__(test_case)
         product_id = str(uuid.uuid4())
@@ -31,11 +36,11 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
         self.cmd("iot product init --product-name {product_name}")
 
         # Test requirement list
-        self.cmd("iot product requirement list")
+        self.cmd("iot product requirement list  --base-url {BASE_URL}")
 
         self.kwargs.update({"badge_type": BadgeType.IotDevice.value})
         requirements_output = self.cmd(
-            "iot product requirement list --bt {badge_type}"
+            "iot product requirement list --bt {badge_type}  --base-url {BASE_URL}"
         ).get_output_in_json()
         expected = [
             {
@@ -49,7 +54,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
         assert requirements_output == expected
         # Device test operations
         test = self.cmd(
-            "iot product test create --at SymmetricKey --dt DevKit -p {product_id}"
+            "iot product test create --at SymmetricKey --dt DevKit -p {product_id} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert test["productId"] == self.kwargs["product_id"]
         assert test["deviceType"].lower() == "devkit"
@@ -61,34 +66,37 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
         self.kwargs.update({"device_test_id": test["id"]})
 
         test = self.cmd(
-            "iot product test show -t {device_test_id}"
+            "iot product test show -t {device_test_id} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert test["productId"] == self.kwargs["product_id"]
         assert test["id"] == self.kwargs["device_test_id"]
 
-        test = self.cmd("iot product test search -p {product_id}").get_output_in_json()[
-            0
-        ]
+        test = self.cmd(
+            "iot product test search -p {product_id} --base-url {BASE_URL}"
+        ).get_output_in_json()[0]
         assert test["productId"] == self.kwargs["product_id"]
         assert test["deviceTestLink"] == "/deviceTests/{}".format(
             self.kwargs["device_test_id"]
         )
 
-        updated = self.cmd("iot product test update -t {device_test_id} --at symmetricKey").get_output_in_json()
+        updated = self.cmd(
+            "iot product test update -t {device_test_id} --at symmetricKey --base-url {BASE_URL}"
+        ).get_output_in_json()
         assert updated["id"] == self.kwargs["device_test_id"]
         assert (
-            updated["provisioningConfiguration"]["type"] == AttestationType.symmetricKey.value
+            updated["provisioningConfiguration"]["type"]
+            == AttestationType.symmetricKey.value
         )
         assert updated["provisioningConfiguration"]["symmetricKeyEnrollmentInformation"]
 
         # Generate test cases
         generate_task = self.cmd(
-            "iot product test task create -t {device_test_id} --type {generate_task}"
+            "iot product test task create -t {device_test_id} --type {generate_task} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert generate_task["status"] == DeviceTestTaskStatus.queued.value
 
         test_task = self.cmd(
-            "iot product test task show --running -t {device_test_id}"
+            "iot product test task show --running -t {device_test_id} --base-url {BASE_URL}"
         ).get_output_in_json()[0]
 
         assert json.dumps(test_task)
@@ -101,7 +109,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
 
         self.kwargs.update({"generate_task_id": test_task["id"]})
         test_task = self.cmd(
-            "iot product test task show -t {device_test_id} --task-id {generate_task_id}"
+            "iot product test task show -t {device_test_id} --task-id {generate_task_id} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert test_task.get("status") == DeviceTestTaskStatus.completed.value
         assert test_task.get("error") == None
@@ -109,7 +117,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
 
         # Test case operations
         case_list = self.cmd(
-            "iot product test case list -t {device_test_id}"
+            "iot product test case list -t {device_test_id} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert json.dumps(case_list)
         assert json.dumps(case_list["certificationBadgeTestCases"])
@@ -118,7 +126,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
 
         # Queue a test run, await the run results
         run = self.cmd(
-            "iot product test task create -t {device_test_id} --type {queue_task} --wait"
+            "iot product test task create -t {device_test_id} --type {queue_task} --wait --base-url {BASE_URL}"
         ).get_output_in_json()
         # test run currently fails without simulator
         assert run["status"] == DeviceTestTaskStatus.failed.value
@@ -127,11 +135,11 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
         self.kwargs.update({"run_id": run["id"]})
         # show run
         run_get = self.cmd(
-            "iot product test run show -t {device_test_id} -r {run_id}"
+            "iot product test run show -t {device_test_id} -r {run_id} --base-url {BASE_URL}"
         ).get_output_in_json()
         # show latest run
         run_latest = self.cmd(
-            "iot product test run show -t {device_test_id}"
+            "iot product test run show -t {device_test_id} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert run_get == run_latest
         assert run_get["id"] == run_latest["id"] == self.kwargs["run_id"]
@@ -143,7 +151,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
 
         # Queue a test run without wait, get run_id
         queue_task = self.cmd(
-            "iot product test task create -t {device_test_id} --type {queue_task}"
+            "iot product test task create -t {device_test_id} --type {queue_task} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert queue_task["type"] == TaskType.QueueTestRun.value
         assert queue_task["status"] == DeviceTestTaskStatus.queued.value
@@ -154,23 +162,28 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
         sleep(5)
 
         queue_task = self.cmd(
-            "iot product test task show -t {device_test_id} --task-id {queue_task_id}"
+            "iot product test task show -t {device_test_id} --task-id {queue_task_id} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert queue_task["type"] == TaskType.QueueTestRun.value
         assert queue_task["status"] == DeviceTestTaskStatus.running.value
 
         # Cancel running test task
-        self.cmd("iot product test task delete -t {device_test_id} --task-id {queue_task_id}")
+        self.cmd(
+            "iot product test task delete -t {device_test_id} --task-id {queue_task_id} --base-url {BASE_URL}"
+        )
 
-        #allow test to be cancelled
+        # allow test to be cancelled
         sleep(5)
 
         # get cancelled test task
         show = self.cmd(
-            "iot product test task show -t {device_test_id} --task-id {queue_task_id}"
+            "iot product test task show -t {device_test_id} --task-id {queue_task_id} --base-url {BASE_URL}"
         ).get_output_in_json()
 
-        assert show['status'] == DeviceTestTaskStatus.cancelled.value
+        assert show["status"] == DeviceTestTaskStatus.cancelled.value
 
         # Submit run
-        self.cmd("iot product test run submit -t {device_test_id} -r {run_id}", expect_failure=True)
+        self.cmd(
+            "iot product test run submit -t {device_test_id} -r {run_id} --base-url {BASE_URL}",
+            expect_failure=True,
+        )

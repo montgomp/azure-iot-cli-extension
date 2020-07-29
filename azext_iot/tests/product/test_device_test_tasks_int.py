@@ -6,11 +6,11 @@
 
 import json
 from time import sleep
-from azure.cli.testsdk import LiveScenarioTest
-from azext_iot.product.shared import TaskType, DeviceTestTaskStatus
+from . import AICSLiveScenarioTest
+from azext_iot.product.shared import TaskType, DeviceTestTaskStatus, BASE_URL
 
 
-class TestProductDeviceTestTasks(LiveScenarioTest):
+class TestProductDeviceTestTasks(AICSLiveScenarioTest):
     def __init__(self, _):
         super(TestProductDeviceTestTasks, self).__init__(_)
         self.kwargs.update(
@@ -31,7 +31,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
 
         # create task for GenerateTestCases
         created = self.cmd(
-            "iot product test task create -t {device_test_id} --type {generate_task} --wait"
+            "iot product test task create -t {device_test_id} --type {generate_task} --wait --base-url {BASE_URL}"
         ).get_output_in_json()
         assert created["deviceTestId"] == self.kwargs["device_test_id"]
         assert json.dumps(created)
@@ -41,7 +41,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
 
         # show task
         show = self.cmd(
-            "iot product test task show -t {device_test_id} --task-id {device_test_task_id}"
+            "iot product test task show -t {device_test_id} --task-id {device_test_task_id} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert json.dumps(show)
         assert show["deviceTestId"] == self.kwargs["device_test_id"]
@@ -49,7 +49,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
 
         # Queue a test run without wait, get run_id
         queue_task = self.cmd(
-            "iot product test task create -t {device_test_id} --type {queue_task}"
+            "iot product test task create -t {device_test_id} --type {queue_task} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert queue_task["type"] == TaskType.QueueTestRun.value
         assert queue_task["status"] == DeviceTestTaskStatus.queued.value
@@ -60,20 +60,22 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
         sleep(5)
 
         queue_task = self.cmd(
-            "iot product test task show -t {device_test_id} --task-id {queue_task_id}"
+            "iot product test task show -t {device_test_id} --task-id {queue_task_id} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert queue_task["type"] == TaskType.QueueTestRun.value
         assert queue_task["status"] == DeviceTestTaskStatus.running.value
 
         # Cancel running test task
-        self.cmd("iot product test task delete -t {device_test_id} --task-id {queue_task_id}")
+        self.cmd(
+            "iot product test task delete -t {device_test_id} --task-id {queue_task_id} --base-url {BASE_URL}"
+        )
 
-        #allow test to be cancelled
+        # allow test to be cancelled
         sleep(5)
 
         # get cancelled test task
         show = self.cmd(
-            "iot product test task show -t {device_test_id} --task-id {queue_task_id}"
+            "iot product test task show -t {device_test_id} --task-id {queue_task_id} --base-url {BASE_URL}"
         ).get_output_in_json()
 
-        assert show['status'] == DeviceTestTaskStatus.cancelled.value
+        assert show["status"] == DeviceTestTaskStatus.cancelled.value
