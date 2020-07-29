@@ -129,7 +129,7 @@ class TestRunSDK(object):
 
     # Gets
     @pytest.fixture(params=[200])
-    def service_client_get(self, mocked_response, request):
+    def service_client_get(self, mocked_response, fixture_mock_aics_token, request):
         # get latest
         mocked_response.add(
             method=responses.GET,
@@ -158,7 +158,7 @@ class TestRunSDK(object):
 
     # submit
     @pytest.fixture(params=[204])
-    def service_client_submit(self, mocked_response, request):
+    def service_client_submit(self, mocked_response, fixture_mock_aics_token, request):
         mocked_response.add(
             method=responses.POST,
             url="{}/deviceTests/{}/testRuns/{}/submit{}".format(
@@ -174,7 +174,7 @@ class TestRunSDK(object):
 
     # get error (invalid test task or run id)
     @pytest.fixture(params=[404])
-    def service_client_error(self, mocked_response, request):
+    def service_client_error(self, mocked_response, fixture_mock_aics_token, request):
         mocked_response.add(
             method=responses.GET,
             url="{}/deviceTests/{}/testRuns/{}{}".format(

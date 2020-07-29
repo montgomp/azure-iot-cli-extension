@@ -174,7 +174,7 @@ class TestTasksSDK(object):
 
     # create call
     @pytest.fixture(params=[202])
-    def service_client_create(self, mocked_response, request):
+    def service_client_create(self, mocked_response, fixture_mock_aics_token, request):
 
         # create test task
         mocked_response.add(
@@ -193,7 +193,7 @@ class TestTasksSDK(object):
     # create task, get task, get run (for --wait)
     @pytest.fixture(params=[200])
     def service_client_create_wait(
-        self, service_client_create, mocked_response, request
+        self, service_client_create, mocked_response, fixture_mock_aics_token, request
     ):
         mocked_response.add(
             method=responses.GET,
@@ -222,7 +222,7 @@ class TestTasksSDK(object):
 
     # delete task
     @pytest.fixture(params=[202])
-    def service_client_delete(self, mocked_response, request):
+    def service_client_delete(self, mocked_response, fixture_mock_aics_token, request):
         mocked_response.add(
             method=responses.DELETE,
             url="{}/deviceTests/{}/tasks/{}{}".format(
@@ -239,7 +239,7 @@ class TestTasksSDK(object):
 
     # get single task
     @pytest.fixture(params=[200])
-    def service_client_get(self, mocked_response, request):
+    def service_client_get(self, mocked_response, fixture_mock_aics_token, request):
 
         mocked_response.add(
             method=responses.GET,
@@ -256,7 +256,9 @@ class TestTasksSDK(object):
 
     # get running tasks
     @pytest.fixture(params=[200])
-    def service_client_get_running(self, mocked_response, request):
+    def service_client_get_running(
+        self, mocked_response, fixture_mock_aics_token, request
+    ):
         mocked_response.add(
             method=responses.GET,
             url="{}/deviceTests/{}/tasks/running{}".format(
