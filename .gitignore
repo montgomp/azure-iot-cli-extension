@@ -319,6 +319,3 @@ src/build
 
 # Code coverage
 .coverage
-
-# remove later
-PnPCert
