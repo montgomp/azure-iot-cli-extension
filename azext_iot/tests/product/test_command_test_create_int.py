@@ -26,10 +26,6 @@ class TestTestCreateInt(LiveScenarioTest):
             )
         ).get_output_in_json()
 
-        import six
-
-        six.print_(output)
-
         assert output["productId"] == self.product_id
         assert output["deviceType"].lower() == device_type.lower()
         assert (

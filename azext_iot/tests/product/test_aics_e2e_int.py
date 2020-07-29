@@ -6,7 +6,6 @@
 
 import uuid
 import json
-import os
 from time import sleep
 from azure.cli.testsdk import LiveScenarioTest
 from azext_iot.product.shared import TaskType, BadgeType, DeviceTestTaskStatus, AttestationType
@@ -93,7 +92,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
 
         assert json.dumps(test_task)
         assert test_task.get("status") == DeviceTestTaskStatus.queued.value
-        assert test_task.get("error") == None
+        assert test_task.get("error") is None
         assert test_task.get("type") == TaskType.GenerateTestCases.value
 
         # wait for generate task to complete
@@ -104,7 +103,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
             "iot product test task show -t {device_test_id} --task-id {generate_task_id}"
         ).get_output_in_json()
         assert test_task.get("status") == DeviceTestTaskStatus.completed.value
-        assert test_task.get("error") == None
+        assert test_task.get("error") is None
         assert test_task.get("type") == TaskType.GenerateTestCases.value
 
         # Test case operations
@@ -162,7 +161,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
         # Cancel running test task
         self.cmd("iot product test task delete -t {device_test_id} --task-id {queue_task_id}")
 
-        #allow test to be cancelled
+        # allow test to be cancelled
         sleep(5)
 
         # get cancelled test task

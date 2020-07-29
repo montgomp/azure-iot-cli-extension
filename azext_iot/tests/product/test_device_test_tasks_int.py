@@ -68,7 +68,7 @@ class TestProductDeviceTestTasks(LiveScenarioTest):
         # Cancel running test task
         self.cmd("iot product test task delete -t {device_test_id} --task-id {queue_task_id}")
 
-        #allow test to be cancelled
+        # allow test to be cancelled
         sleep(5)
 
         # get cancelled test task

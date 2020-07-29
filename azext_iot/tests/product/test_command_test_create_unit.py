@@ -8,7 +8,7 @@ import unittest
 import mock
 from knack.util import CLIError
 from azext_iot.product.test.command_tests import create
-from azext_iot.product.shared import BadgeType, AttestationType, DeviceType
+from azext_iot.product.shared import BadgeType, AttestationType, DeviceType, TaskType
 
 
 class TestTestCreateUnit(unittest.TestCase):
@@ -287,3 +287,60 @@ class TestTestCreateUnit(unittest.TestCase):
         create(self, configuration_file="somefile")
         mock_from_file.assert_called_with("somefile")
         mock_sdk_create.assert_called_with(provisioning=True, body=mock_file_data)
+
+    @mock.patch("azext_iot.product.test.command_test_tasks.create")
+    @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test")
+    @mock.patch("azext_iot.product.test.command_tests._process_models_directory")
+    def test_create_with_generate_tests(
+        self, mock_process_models, mock_service, mock_tasks_create,
+    ):
+        mock_process_models.return_value = [
+            '{"@id":"model1"}',
+            '{"@id":"model2"}',
+            '{"@id":"model3"}',
+        ]
+        test_data = mock.Mock()
+        test_data.id = "test123"
+        mock_service.return_value = test_data
+
+        create(
+            self,
+            attestation_type=AttestationType.tpm.value,
+            endorsement_key="12345",
+            product_id=self.product_id,
+            device_type=DeviceType.DevKit.value,
+            models="models_folder",
+            badge_type=BadgeType.Pnp.value,
+            generate_test_cases=True
+        )
+
+        mock_process_models.assert_called_with("models_folder")
+        mock_service.assert_called_with(
+            provisioning=True,
+            body={
+                "validationType": "Certification",
+                "productId": self.product_id,
+                "deviceType": "DevKit",
+                "provisioningConfiguration": {
+                    "type": "TPM",
+                    "tpmEnrollmentInformation": {"endorsementKey": "12345"},
+                },
+                "certificationBadgeConfigurations": [
+                    {
+                        "type": "Pnp",
+                        "digitalTwinModelDefinitions": [
+                            '{"@id":"model1"}',
+                            '{"@id":"model2"}',
+                            '{"@id":"model3"}',
+                        ],
+                    }
+                ],
+            },
+        )
+        mock_tasks_create.assert_called_with(
+            cmd=self,
+            test_id="test123",
+            task_type=TaskType.GenerateTestCases.value,
+            wait=True,
+            base_url=None
+        )
