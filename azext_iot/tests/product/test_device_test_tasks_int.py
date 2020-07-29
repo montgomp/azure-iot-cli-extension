@@ -7,7 +7,7 @@
 import json
 from time import sleep
 from . import AICSLiveScenarioTest
-from azext_iot.product.shared import TaskType, DeviceTestTaskStatus, BASE_URL
+from azext_iot.product.shared import TaskType, DeviceTestTaskStatus
 
 
 class TestProductDeviceTestTasks(AICSLiveScenarioTest):
