@@ -28,9 +28,7 @@ def load_help():
         "iot product requirement list"
     ] = """
         type: command
-        short-summary: Get certification requirements
-        long-summary: |
-                      Discover information about provisioning attestation methods that are supported for each badge type
+        short-summary: Discover information about provisioning attestation methods that are supported for each badge type
         examples:
         - name: Basic usage
           text: >
@@ -42,7 +40,7 @@ def load_help():
         type: command
         short-summary: Used to initialize local workspace for a new product certification
         examples:
-        - name: Basic usage
+        - name: Use default working folder ('PnPCert')
           text: >
             az iot product init --product-name {product_name}
         - name: Specify working folder
