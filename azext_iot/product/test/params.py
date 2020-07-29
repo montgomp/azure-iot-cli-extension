@@ -154,13 +154,13 @@ def load_product_test_params(self, _):
         c.argument(
             "wait",
             options_list=["--wait", "-w"],
-            help='Wait until test run until status is "started" or "running"',
+            help='Wait until test run status is "started" or "running"',
             arg_group="IoT Device Certification",
             arg_type=get_three_state_flag(),
         )
         c.argument(
             "poll_interval",
             options_list=["--poll-interval", "--interval"],
-            help="Used in conjunction with --wait. Sepcifies how frequently (in seconds) polling occurs",
+            help="Used in conjunction with --wait. Specifies how frequently (in seconds) polling occurs",
             arg_group="IoT Device Certification",
         )
