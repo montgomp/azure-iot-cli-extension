@@ -19,9 +19,6 @@ requirements_ops = CliCommandType(
 
 
 def load_product_commands(self, _):
-    with self.command_group("iot product", command_type=product_ops) as g:
-        g.command("init", "initialize_workspace")
-
     with self.command_group(
         "iot product requirement", command_type=requirements_ops
     ) as g:
