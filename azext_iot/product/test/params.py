@@ -9,7 +9,7 @@ CLI parameter definitions.
 """
 
 from azure.cli.core.commands.parameters import get_three_state_flag, get_enum_type
-from azext_iot.product.shared import AttestationType, DeviceType, TaskType
+from azext_iot.product.shared import AttestationType, DeviceType, TaskType, ValidationType
 
 
 def load_product_test_params(self, _):
@@ -73,8 +73,15 @@ def load_product_test_params(self, _):
         c.argument(
             "product_id",
             options_list=["--product-id", "-p"],
-            help="The submitted product id",
+            help="The submitted product id. Required when validation-type is 'Certification'.",
             arg_group="IoT Device Certification Device Definition",
+        )
+        c.argument(
+            "validation_type",
+            options_list=["--validation-type", "--vt"],
+            help="The type of validations testing to be performed",
+            arg_group="IoT Device Certification Device Definition",
+            arg_type=get_enum_type(ValidationType)
         )
     with self.argument_context("iot product test search") as c:
         c.argument(

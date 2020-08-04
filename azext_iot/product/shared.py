@@ -39,4 +39,9 @@ class DeviceTestTaskStatus(Enum):
     cancelled = "Cancelled"
 
 
+class ValidationType(Enum):
+    test = "Test"
+    certification = "Certification"
+
+
 BASE_URL = "https://certify.azureiotsolutions.com"

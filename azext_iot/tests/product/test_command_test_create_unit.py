@@ -8,7 +8,7 @@ import unittest
 import mock
 from knack.util import CLIError
 from azext_iot.product.test.command_tests import create
-from azext_iot.product.shared import BadgeType, AttestationType, DeviceType
+from azext_iot.product.shared import BadgeType, AttestationType, DeviceType, ValidationType
 
 
 class TestTestCreateUnit(unittest.TestCase):
@@ -95,6 +95,21 @@ class TestTestCreateUnit(unittest.TestCase):
             str(context.exception),
         )
 
+    def test_create_certification_with_missing_product_id_fails(self):
+        with self.assertRaises(CLIError) as context:
+            create(
+                self,
+                attestation_type=AttestationType.symmetricKey.value,
+                device_type=DeviceType.DevKit.value,
+                badge_type=BadgeType.Pnp.value,
+                models="models_folder",
+                validation_type=ValidationType.certification.value
+            )
+        self.assertEqual(
+            "Product Id is required for validation type Certification",
+            str(context.exception),
+        )
+
     @mock.patch("azext_iot.product.test.command_tests._process_models_directory")
     @mock.patch("azext_iot.sdk.product.aicsapi.AICSAPI.create_device_test")
     def test_create_with_default_badge_type_doesnt_check_models(
@@ -111,7 +126,8 @@ class TestTestCreateUnit(unittest.TestCase):
         mock_service.assert_called_with(
             provisioning=True,
             body={
-                "validationType": "Certification",
+                "validationType": "Test",
+                "productId": None,
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
                     "type": "SymmetricKey",
@@ -143,7 +159,8 @@ class TestTestCreateUnit(unittest.TestCase):
         mock_service.assert_called_with(
             provisioning=True,
             body={
-                "validationType": "Certification",
+                "validationType": "Test",
+                "productId": None,
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
                     "type": "SymmetricKey",
@@ -181,6 +198,8 @@ class TestTestCreateUnit(unittest.TestCase):
             models="models_folder",
             badge_type=BadgeType.Pnp.value,
             certificate_path="mycertificate.cer",
+            product_id="ABC123",
+            validation_type=ValidationType.certification.value
         )
 
         mock_read_certificate.assert_called_with("mycertificate.cer")
@@ -189,6 +208,7 @@ class TestTestCreateUnit(unittest.TestCase):
             provisioning=True,
             body={
                 "validationType": "Certification",
+                "productId": "ABC123",
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
                     "type": "X509",
@@ -235,7 +255,8 @@ class TestTestCreateUnit(unittest.TestCase):
         mock_service.assert_called_with(
             provisioning=True,
             body={
-                "validationType": "Certification",
+                "validationType": "Test",
+                "productId": None,
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
                     "type": "TPM",
