@@ -15,18 +15,6 @@ from azext_iot.product.shared import BadgeType
 def load_product_params(self, _):
     with self.argument_context("iot product") as c:
         c.argument(
-            "working_folder",
-            options_list=["--working-folder", "--wf"],
-            help="The folder to create in current path",
-            arg_group="IoT Device Certification",
-        )
-        c.argument(
-            "product_name",
-            options_list=["--product-name"],
-            help="Product name to display in catalog",
-            arg_group="IoT Device Certification",
-        )
-        c.argument(
             "test_id",
             options_list=["--test-id", "-t"],
             help="The generated Id for the device certification test",
