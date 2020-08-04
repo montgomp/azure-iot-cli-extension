@@ -30,6 +30,21 @@ def load_help():
         - name: Do not have service create provisioning configuration
           text: >
             az iot product test create --configuration-file {configuration_file} --skip-provisioning
+        - name: Creating test with symmetric key attestation
+          text: >
+            az iot product test create --attestation-type SymmetricKey --device-type {device_type}
+        - name: Creating test with TPM attestation
+          text: >
+            az iot product test create --attestation-type TPM --device-type {device_type} --endorsement-key {endorsement_key}
+        - name: Creating test with x509 attestation
+          text: >
+            az iot product test create --attestation-type x509 --device-type {device_type} --certificate-path
+        - name: Creating test for Edge module
+          text: >
+            az iot product test create --attestation-type ConnectionString --device-type {device_type} --badge-type IotEdgeCompatible --connection-string {connection_string}
+        - name: Creating test with symmetric key attestation and specified validation type
+          text: >
+            az iot product test create --attestation-type SymmetricKey --device-type {device_type} --validation-type Certification --product-id {product_id}
     """
     helps[
         "iot product test search"

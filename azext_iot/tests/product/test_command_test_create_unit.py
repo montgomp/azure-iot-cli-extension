@@ -13,7 +13,6 @@ from azext_iot.product.shared import BadgeType, AttestationType, DeviceType
 
 class TestTestCreateUnit(unittest.TestCase):
     def __init__(self, test_case):
-        self.product_id = "b70a3805-5800-4272-93f2-1b4d0150f683"
         super(TestTestCreateUnit, self).__init__(test_case)
 
     def test_create_with_no_parameters_fails(self):
@@ -87,22 +86,6 @@ class TestTestCreateUnit(unittest.TestCase):
             create(
                 self,
                 attestation_type=AttestationType.symmetricKey.value,
-                product_id=self.product_id,
-                badge_type=BadgeType.Pnp.value,
-                models="models_folder",
-            )
-
-        self.assertEqual(
-            "If configuration file is not specified, attestation and device definition parameters must be specified",
-            str(context.exception),
-        )
-
-    def test_create_with_missing_product_id_fails(self):
-        with self.assertRaises(CLIError) as context:
-            create(
-                self,
-                attestation_type=AttestationType.symmetricKey.value,
-                device_type=DeviceType.DevKit.value,
                 badge_type=BadgeType.Pnp.value,
                 models="models_folder",
             )
@@ -120,7 +103,6 @@ class TestTestCreateUnit(unittest.TestCase):
         create(
             self,
             attestation_type=AttestationType.symmetricKey.value,
-            product_id=self.product_id,
             device_type=DeviceType.DevKit.value,
             models="models_folder",
         )
@@ -130,7 +112,6 @@ class TestTestCreateUnit(unittest.TestCase):
             provisioning=True,
             body={
                 "validationType": "Certification",
-                "productId": self.product_id,
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
                     "type": "SymmetricKey",
@@ -153,7 +134,6 @@ class TestTestCreateUnit(unittest.TestCase):
         create(
             self,
             attestation_type=AttestationType.symmetricKey.value,
-            product_id=self.product_id,
             device_type=DeviceType.DevKit.value,
             models="models_folder",
             badge_type=BadgeType.Pnp.value,
@@ -164,7 +144,6 @@ class TestTestCreateUnit(unittest.TestCase):
             provisioning=True,
             body={
                 "validationType": "Certification",
-                "productId": self.product_id,
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
                     "type": "SymmetricKey",
@@ -198,7 +177,6 @@ class TestTestCreateUnit(unittest.TestCase):
         create(
             self,
             attestation_type=AttestationType.x509.value,
-            product_id=self.product_id,
             device_type=DeviceType.DevKit.value,
             models="models_folder",
             badge_type=BadgeType.Pnp.value,
@@ -211,7 +189,6 @@ class TestTestCreateUnit(unittest.TestCase):
             provisioning=True,
             body={
                 "validationType": "Certification",
-                "productId": self.product_id,
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
                     "type": "X509",
@@ -247,7 +224,6 @@ class TestTestCreateUnit(unittest.TestCase):
             self,
             attestation_type=AttestationType.tpm.value,
             endorsement_key="12345",
-            product_id=self.product_id,
             device_type=DeviceType.DevKit.value,
             models="models_folder",
             badge_type=BadgeType.Pnp.value,
@@ -260,7 +236,6 @@ class TestTestCreateUnit(unittest.TestCase):
             provisioning=True,
             body={
                 "validationType": "Certification",
-                "productId": self.product_id,
                 "deviceType": "DevKit",
                 "provisioningConfiguration": {
                     "type": "TPM",

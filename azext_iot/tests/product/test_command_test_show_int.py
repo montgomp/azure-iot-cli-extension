@@ -10,7 +10,6 @@ from . import AICSLiveScenarioTest
 class TestTestShowInt(AICSLiveScenarioTest):
     def __init__(self, test_case):
         self.test_id = "524ac74f-752b-4748-9667-45cd09e8a098"
-        self.product_id = "81cf6ae4-1702-4158-8abe-72473c9ae5ab"
         super(TestTestShowInt, self).__init__(test_case)
 
     def test_show_test(self):
@@ -21,5 +20,4 @@ class TestTestShowInt(AICSLiveScenarioTest):
             )
         ).get_output_in_json()
 
-        assert output["productId"] == self.product_id
         assert output["id"] == self.test_id
