@@ -15,20 +15,13 @@ from msrest.serialization import Model
 class TestRunNotExistError(Model):
     """TestRunNotExistError.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param message:
     :type message: str
     :param code:
     :type code: int
-    :ivar details:
-    :vartype details: list[object]
+    :param details:
+    :type details: list[object]
     """
-
-    _validation = {
-        'details': {'readonly': True},
-    }
 
     _attribute_map = {
         'message': {'key': 'message', 'type': 'str'},
@@ -36,8 +29,8 @@ class TestRunNotExistError(Model):
         'details': {'key': 'details', 'type': '[object]'},
     }
 
-    def __init__(self, *, message: str=None, code: int=None, **kwargs) -> None:
+    def __init__(self, *, message: str=None, code: int=None, details=None, **kwargs) -> None:
         super(TestRunNotExistError, self).__init__(**kwargs)
         self.message = message
         self.code = code
-        self.details = None
+        self.details = details

@@ -12,25 +12,22 @@
 from msrest.serialization import Model
 
 
-class TestCasesNotExistError(Model):
-    """TestCasesNotExistError.
+class ModelResolutionSource(Model):
+    """ModelResolutionSource.
 
-    :param message:
-    :type message: str
-    :param code:
-    :type code: int
-    :param details:
-    :type details: list[object]
+    :param priority:
+    :type priority: int
+    :param source_type: Possible values include: 'Unknown',
+     'GlobalRepository', 'PrivateRepository', 'UserUploads'
+    :type source_type: str or ~product.models.enum
     """
 
     _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'code': {'key': 'code', 'type': 'int'},
-        'details': {'key': 'details', 'type': '[object]'},
+        'priority': {'key': 'priority', 'type': 'int'},
+        'source_type': {'key': 'sourceType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(TestCasesNotExistError, self).__init__(**kwargs)
-        self.message = kwargs.get('message', None)
-        self.code = kwargs.get('code', None)
-        self.details = kwargs.get('details', None)
+        super(ModelResolutionSource, self).__init__(**kwargs)
+        self.priority = kwargs.get('priority', None)
+        self.source_type = kwargs.get('source_type', None)

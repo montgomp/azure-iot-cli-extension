@@ -22,6 +22,7 @@ try:
     from .provisioning_configuration_py3 import ProvisioningConfiguration
     from .iot_device_certification_badge_configuration_py3 import IotDeviceCertificationBadgeConfiguration
     from .iot_edge_compatible_certification_badge_configuration_py3 import IotEdgeCompatibleCertificationBadgeConfiguration
+    from .model_resolution_source_py3 import ModelResolutionSource
     from .pnp_certification_badge_configuration_py3 import PnpCertificationBadgeConfiguration
     from .device_test_py3 import DeviceTest
     from .device_test_search_options_py3 import DeviceTestSearchOptions
@@ -79,6 +80,7 @@ except (SyntaxError, ImportError):
     from .provisioning_configuration import ProvisioningConfiguration
     from .iot_device_certification_badge_configuration import IotDeviceCertificationBadgeConfiguration
     from .iot_edge_compatible_certification_badge_configuration import IotEdgeCompatibleCertificationBadgeConfiguration
+    from .model_resolution_source import ModelResolutionSource
     from .pnp_certification_badge_configuration import PnpCertificationBadgeConfiguration
     from .device_test import DeviceTest
     from .device_test_search_options import DeviceTestSearchOptions
@@ -137,6 +139,7 @@ __all__ = [
     'ProvisioningConfiguration',
     'IotDeviceCertificationBadgeConfiguration',
     'IotEdgeCompatibleCertificationBadgeConfiguration',
+    'ModelResolutionSource',
     'PnpCertificationBadgeConfiguration',
     'DeviceTest',
     'DeviceTestSearchOptions',

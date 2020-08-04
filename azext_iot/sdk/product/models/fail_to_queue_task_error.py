@@ -15,20 +15,13 @@ from msrest.serialization import Model
 class FailToQueueTaskError(Model):
     """FailToQueueTaskError.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param message:
     :type message: str
     :param code:
     :type code: int
-    :ivar details:
-    :vartype details: list[object]
+    :param details:
+    :type details: list[object]
     """
-
-    _validation = {
-        'details': {'readonly': True},
-    }
 
     _attribute_map = {
         'message': {'key': 'message', 'type': 'str'},
@@ -40,4 +33,4 @@ class FailToQueueTaskError(Model):
         super(FailToQueueTaskError, self).__init__(**kwargs)
         self.message = kwargs.get('message', None)
         self.code = kwargs.get('code', None)
-        self.details = None
+        self.details = kwargs.get('details', None)

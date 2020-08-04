@@ -27,6 +27,9 @@ class PnpCertificationBadgeResult(Model):
     :ivar type: Possible values include: 'IotDevice', 'Pnp',
      'IotEdgeCompatible'
     :vartype type: str or ~product.models.enum
+    :param resolution_source: Possible values include: 'Unknown',
+     'GlobalRepository', 'PrivateRepository', 'UserUploads'
+    :type resolution_source: str or ~product.models.enum
     """
 
     _validation = {
@@ -39,6 +42,7 @@ class PnpCertificationBadgeResult(Model):
         'validation_tasks': {'key': 'validationTasks', 'type': '[DigitalTwinValidationTaskResult]'},
         'pre_validation_tasks': {'key': 'preValidationTasks', 'type': '[PreValidationTaskResult]'},
         'type': {'key': 'type', 'type': 'str'},
+        'resolution_source': {'key': 'resolutionSource', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -46,3 +50,4 @@ class PnpCertificationBadgeResult(Model):
         self.validation_tasks = None
         self.pre_validation_tasks = None
         self.type = None
+        self.resolution_source = kwargs.get('resolution_source', None)

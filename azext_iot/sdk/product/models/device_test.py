@@ -23,7 +23,7 @@ class DeviceTest(Model):
     :param validation_type:
      Microsoft.Azure.IoT.TestKit.Shared.Models.ValidationType of a
      Microsoft.Azure.IoT.TestKit.Models.DeviceTest. Possible values include:
-     'Certification'
+     'Certification', 'Test'
     :type validation_type: str or ~product.models.enum
     :param product_id: Product Id of the testing device in product service. In
      CLI scenario, this can be null.
