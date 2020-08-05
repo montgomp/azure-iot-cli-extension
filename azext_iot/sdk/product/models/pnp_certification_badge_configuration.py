@@ -17,6 +17,8 @@ class PnpCertificationBadgeConfiguration(Model):
 
     :param digital_twin_model_definitions:
     :type digital_twin_model_definitions: list[str]
+    :param resolution_sources:
+    :type resolution_sources: list[~product.models.ModelResolutionSource]
     :param type: Possible values include: 'IotDevice', 'Pnp',
      'IotEdgeCompatible'
     :type type: str or ~product.models.enum
@@ -24,10 +26,12 @@ class PnpCertificationBadgeConfiguration(Model):
 
     _attribute_map = {
         'digital_twin_model_definitions': {'key': 'digitalTwinModelDefinitions', 'type': '[str]'},
+        'resolution_sources': {'key': 'resolutionSources', 'type': '[ModelResolutionSource]'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(PnpCertificationBadgeConfiguration, self).__init__(**kwargs)
         self.digital_twin_model_definitions = kwargs.get('digital_twin_model_definitions', None)
+        self.resolution_sources = kwargs.get('resolution_sources', None)
         self.type = kwargs.get('type', None)

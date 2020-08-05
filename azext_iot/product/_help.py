@@ -34,16 +34,3 @@ def load_help():
           text: >
             az iot product requirement list
     """
-    helps[
-        "iot product init"
-    ] = """
-        type: command
-        short-summary: Used to initialize local workspace for a new product certification
-        examples:
-        - name: Use default working folder ('PnPCert')
-          text: >
-            az iot product init --product-name {product_name}
-        - name: Specify working folder
-          text: >
-            az iot product init --product-name {product_name} --working-folder {working_folder}
-    """

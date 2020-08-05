@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import uuid
 import json
 from time import sleep
 from . import AICSLiveScenarioTest
@@ -19,20 +18,14 @@ from azext_iot.product.shared import (
 class TestProductDeviceTestTasks(AICSLiveScenarioTest):
     def __init__(self, test_case):
         super(TestProductDeviceTestTasks, self).__init__(test_case)
-        product_id = str(uuid.uuid4())
         self.kwargs.update(
             {
-                "product_id": product_id,
-                "product_name": "IoTProduct",
                 "generate_task": TaskType.GenerateTestCases.value,
                 "queue_task": TaskType.QueueTestRun.value,
             }
         )
 
     def test_e2e(self):
-
-        # Test workspace init
-        self.cmd("iot product init --product-name {product_name}")
 
         # Test requirement list
         self.cmd("iot product requirement list  --base-url {BASE_URL}")
@@ -53,9 +46,8 @@ class TestProductDeviceTestTasks(AICSLiveScenarioTest):
         assert requirements_output == expected
         # Device test operations
         test = self.cmd(
-            "iot product test create --at SymmetricKey --dt DevKit -p {product_id} --base-url {BASE_URL}"
+            "iot product test create --at SymmetricKey --dt DevKit --base-url {BASE_URL}"
         ).get_output_in_json()
-        assert test["productId"] == self.kwargs["product_id"]
         assert test["deviceType"].lower() == "devkit"
         assert test["provisioningConfiguration"]["type"].lower() == "symmetrickey"
         assert test["provisioningConfiguration"]["symmetricKeyEnrollmentInformation"][
@@ -67,16 +59,7 @@ class TestProductDeviceTestTasks(AICSLiveScenarioTest):
         test = self.cmd(
             "iot product test show -t {device_test_id} --base-url {BASE_URL}"
         ).get_output_in_json()
-        assert test["productId"] == self.kwargs["product_id"]
         assert test["id"] == self.kwargs["device_test_id"]
-
-        test = self.cmd(
-            "iot product test search -p {product_id} --base-url {BASE_URL}"
-        ).get_output_in_json()[0]
-        assert test["productId"] == self.kwargs["product_id"]
-        assert test["deviceTestLink"] == "/deviceTests/{}".format(
-            self.kwargs["device_test_id"]
-        )
 
         updated = self.cmd(
             "iot product test update -t {device_test_id} --at symmetricKey --base-url {BASE_URL}"
@@ -181,8 +164,8 @@ class TestProductDeviceTestTasks(AICSLiveScenarioTest):
 
         assert show["status"] == DeviceTestTaskStatus.cancelled.value
 
-        # Submit run
-        self.cmd(
-            "iot product test run submit -t {device_test_id} -r {run_id} --base-url {BASE_URL}",
-            expect_failure=True,
-        )
+        # # Submit run
+        # self.cmd(
+        #     "iot product test run submit -t {device_test_id} -r {run_id} --base-url {BASE_URL}",
+        #     expect_failure=True,
+        # )

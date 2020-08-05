@@ -63,19 +63,20 @@ class TestProductDeviceTestTasks(AICSLiveScenarioTest):
             "iot product test task show -t {device_test_id} --task-id {queue_task_id} --base-url {BASE_URL}"
         ).get_output_in_json()
         assert queue_task["type"] == TaskType.QueueTestRun.value
-        assert queue_task["status"] == DeviceTestTaskStatus.running.value
+        assert queue_task["status"] != DeviceTestTaskStatus.queued.value
 
-        # Cancel running test task
-        self.cmd(
-            "iot product test task delete -t {device_test_id} --task-id {queue_task_id} --base-url {BASE_URL}"
-        )
+        if queue_task["status"] == DeviceTestTaskStatus.running:
+            # Cancel running test task
+            self.cmd(
+                "iot product test task delete -t {device_test_id} --task-id {queue_task_id} --base-url {BASE_URL}"
+            )
 
-        # allow test to be cancelled
-        sleep(5)
+            # allow test to be cancelled
+            sleep(5)
 
-        # get cancelled test task
-        show = self.cmd(
-            "iot product test task show -t {device_test_id} --task-id {queue_task_id} --base-url {BASE_URL}"
-        ).get_output_in_json()
+            # get cancelled test task
+            show = self.cmd(
+                "iot product test task show -t {device_test_id} --task-id {queue_task_id} --base-url {BASE_URL}"
+            ).get_output_in_json()
 
-        assert show["status"] == DeviceTestTaskStatus.cancelled.value
+            assert show["status"] == DeviceTestTaskStatus.cancelled.value

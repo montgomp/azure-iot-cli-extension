@@ -6,7 +6,7 @@
 
 from azext_iot.product.providers.aics import AICSProvider
 from azext_iot.sdk.product.models import DeviceTestSearchOptions
-from azext_iot.product.shared import BadgeType, AttestationType
+from azext_iot.product.shared import BadgeType, AttestationType, ValidationType
 from knack.log import get_logger
 from knack.util import CLIError
 import os
@@ -24,6 +24,7 @@ def create(
     connection_string=None,
     endorsement_key=None,
     badge_type=BadgeType.IotDevice.value,
+    validation_type=ValidationType.test.value,
     models=None,
     skip_provisioning=False,
     base_url=None,
@@ -46,10 +47,14 @@ def create(
         raise CLIError(
             "Connection string is only available for Edge Compatible modules testing"
         )
+    if validation_type != ValidationType.test.value and not product_id:
+        raise CLIError(
+            "Product Id is required for validation type {}".format(validation_type)
+        )
     if not any(
         [
             configuration_file,
-            all([device_type, product_id, attestation_type, badge_type]),
+            all([device_type, attestation_type, badge_type]),
         ]
     ):
         raise CLIError(
@@ -67,6 +72,7 @@ def create(
             badge_type=badge_type,
             connection_string=connection_string,
             models=models,
+            validation_type=validation_type
         )
     )
 
@@ -210,9 +216,10 @@ def _build_test_configuration(
     connection_string,
     badge_type,
     models,
+    validation_type
 ):
     config = {
-        "validationType": "Certification",
+        "validationType": validation_type,
         "productId": product_id,
         "deviceType": device_type,
         "provisioningConfiguration": {"type": attestation_type},
